@@ -1,0 +1,137 @@
+@import url("https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.min.css");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --main-red: #e01e1e;
+  --main-dark-red: #b10023;
+  --black: #121212;
+  --white: #e0e0e0;
+  --gray: #1e1e1e;
+  --light-bg: #2a2a2a;
+  --accent: #ffd0d0;
+  --hint-blue: #87ceeb;
+
+  --background: var(--black);
+  --foreground: var(--white);
+
+  --card: var(--gray);
+  --card-foreground: var(--white);
+
+  --popover: var(--gray);
+  --popover-foreground: var(--white);
+
+  --primary: var(--main-red);
+  --primary-foreground: var(--white);
+
+  --secondary: rgba(255, 255, 255, 0.1);
+  --secondary-foreground: var(--white);
+
+  --muted: rgba(255, 255, 255, 0.1);
+  --muted-foreground: rgba(255, 255, 255, 0.5);
+
+  --accent: var(--accent);
+  --accent-foreground: var(--black);
+
+  --destructive: var(--main-dark-red);
+  --destructive-foreground: var(--white);
+
+  --border: rgba(255, 255, 255, 0.15);
+  --input: rgba(255, 255, 255, 0.15);
+  --ring: var(--main-red);
+
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: var(--black);
+  --foreground: var(--white);
+
+  --card: var(--gray);
+  --card-foreground: var(--white);
+
+  --popover: var(--gray);
+  --popover-foreground: var(--white);
+
+  --primary: var(--main-red);
+  --primary-foreground: var(--white);
+
+  --secondary: rgba(255, 255, 255, 0.1);
+  --secondary-foreground: var(--white);
+
+  --muted: rgba(255, 255, 255, 0.1);
+  --muted-foreground: rgba(255, 255, 255, 0.5);
+
+  --accent: rgba(255, 255, 255, 0.1);
+  --accent-foreground: var(--white);
+
+  --destructive: var(--main-dark-red);
+  --destructive-foreground: var(--white);
+
+  --border: rgba(255, 255, 255, 0.15);
+  --input: rgba(255, 255, 255, 0.15);
+  --ring: var(--main-red);
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-hanghae-black text-hanghae-text;
+    font-family:
+      "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", "Segoe UI", "Apple SD Gothic Neo", "Noto Sans KR", "Malgun Gothic", "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", sans-serif;
+  }
+}
+
+@layer components {
+  .container {
+    @apply px-4 md:px-6;
+  }
+
+  .sidebar-link {
+    @apply flex items-center gap-2 px-3 py-2 rounded-md text-sm font-medium transition-colors hover:bg-hanghae-light;
+  }
+
+  .sidebar-link.active {
+    @apply bg-main-red text-white hover:bg-main-red/90;
+  }
+
+  .notification-card {
+    @apply bg-hanghae-accent/20 text-hanghae-text rounded-lg p-4 border-0;
+  }
+
+  .main-button {
+    @apply bg-main-red hover:bg-main-red/90 text-white rounded-md px-4 py-2 transition-colors;
+  }
+
+  .secondary-button {
+    @apply bg-hanghae-light hover:bg-hanghae-light/80 text-hanghae-text rounded-md px-4 py-2 transition-colors;
+  }
+
+  /* Button animation classes */
+  @keyframes pulse-animation {
+    0% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.05);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+  }
+
+  .btn-pulse {
+    animation: pulse-animation 0.6s ease-in-out;
+  }
+
+  .btn-transition {
+    transition: all 0.3s ease-in-out;
+  }
+}
