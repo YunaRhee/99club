@@ -20,7 +20,8 @@ export async function GET(request: Request, { params }: { params: { id: string }
       success: true,
       data: question,
     })
-  } catch (error) {
+  } catch (error: any) {
+    // 타입 오류 수정: error를 any 타입으로 명시
     console.error("질문 API 오류:", error)
     return NextResponse.json(
       {
