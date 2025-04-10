@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server"
 import { getQuestionById } from "@/lib/server-api"
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
+// 명시적으로 런타임 설정 추가
+export const runtime = "nodejs"
+
+export async function GET(request: Request, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const id = params.id
+    // params가 Promise이므로 await 사용
+    const { id } = await params
     const question = await getQuestionById(id)
 
     if (!question) {
@@ -23,14 +27,12 @@ export async function GET(request: Request, { params }: { params: { id: string }
   } catch (error) {
     console.error("질문 API 오류:", error)
 
-    // 오류 메시지 추출 방식 단순화
-    const errorMessage = error instanceof Error ? error.message : String(error)
-
+    // 간단한 오류 처리
     return NextResponse.json(
       {
         success: false,
         message: "서버 오류가 발생했습니다.",
-        error: errorMessage,
+        error: String(error),
       },
       { status: 500 },
     )
