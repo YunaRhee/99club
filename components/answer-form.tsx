@@ -29,6 +29,9 @@ export default function AnswerForm({ questionId, category = "Frontend" }: Answer
   const [isPublic, setIsPublic] = useState(true)
   const [savedAnswer, setSavedAnswer] = useState<any>(null)
 
+  // 기존 useState 선언 부분 아래에 새로운 상태 추가
+  const [phoneError, setPhoneError] = useState<string>("")
+
   // Helper function to map category to tab
   const mapCategoryToTab = (category: string) => {
     switch (category) {
@@ -74,11 +77,15 @@ export default function AnswerForm({ questionId, category = "Frontend" }: Answer
 
     const storageKey = `answer_${questionId}_${category}`
 
+    // KST 기준 현재 시간 (UTC+9)
+    const now = new Date()
+    const kstNow = new Date(now.getTime() + 9 * 60 * 60 * 1000)
+
     // Add timestamp for 24-hour expiration
     const dataWithExpiry = {
       ...answerData,
-      timestamp: new Date().getTime(),
-      expiryTime: new Date().getTime() + 24 * 60 * 60 * 1000, // 24 hours
+      timestamp: kstNow.getTime(),
+      expiryTime: kstNow.getTime() + 24 * 60 * 60 * 1000, // 24 hours
     }
 
     localStorage.setItem(storageKey, JSON.stringify(dataWithExpiry))
@@ -209,6 +216,31 @@ export default function AnswerForm({ questionId, category = "Frontend" }: Answer
     fetchSavedAnswer()
   }, [questionId, nickname, activeTab])
 
+  // 전화번호 입력 필드 onChange 핸들러 수정
+  const handlePhoneChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value
+
+    // 숫자만 입력 가능하도록 검사
+    if (value && !/^\d*$/.test(value)) {
+      setPhoneError("숫자만 입력 가능합니다")
+      return
+    }
+
+    // 4자리 초과 입력 방지
+    if (value.length > 4) {
+      return
+    }
+
+    setPhone(value)
+
+    // 유효성 검사 메시지 업데이트
+    if (value.length > 0 && value.length < 4) {
+      setPhoneError("4자리를 모두 입력해주세요")
+    } else {
+      setPhoneError("")
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
 
@@ -225,6 +257,15 @@ export default function AnswerForm({ questionId, category = "Frontend" }: Answer
       toast({
         title: "입력 오류",
         description: "전화번호 뒤 4자리를 입력해주세요.",
+        variant: "destructive",
+      })
+      return
+    }
+
+    if (phone.length !== 4 || !/^\d{4}$/.test(phone)) {
+      toast({
+        title: "입력 오류",
+        description: "전화번호는 숫자 4자리로 입력해주세요.",
         variant: "destructive",
       })
       return
@@ -354,11 +395,13 @@ export default function AnswerForm({ questionId, category = "Frontend" }: Answer
               id="password"
               type="text"
               value={phone}
-              onChange={(e) => setPhone(e.target.value)}
+              onChange={handlePhoneChange}
               className="bg-hanghae-light border-0 text-hanghae-text"
               placeholder="전화번호 뒤 4자리를 입력해 주세요"
+              maxLength={4}
               required
             />
+            {phoneError && <p className="text-xs text-red-500">{phoneError}</p>}
           </div>
 
           <Textarea

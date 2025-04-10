@@ -1,185 +1,111 @@
-"use client"
-
-import { useAuth } from "@/lib/auth-context"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { UserLoginDialog } from "@/components/user-login-dialog"
-import { useState, useEffect } from "react"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { getUserActivity } from "@/lib/user-activity"
+import { Card, CardContent } from "@/components/ui/card"
 import PageLayout from "@/components/page-layout"
 
-export default function MyRecordsPage() {
-  const { user } = useAuth()
-  const [selectedDate, setSelectedDate] = useState<string | null>(null)
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [stats, setStats] = useState({
-    answeredQuestions: 0,
-    readQuestions: 0,
-    consecutiveDays: 0,
-  })
-
-  // 실제 사용자 활동 데이터 가져오기
-  useEffect(() => {
-    if (!user?.nickname || !user?.phone) return
-
-    const activity = getUserActivity(user.nickname, user.phone)
-    setStats({
-      answeredQuestions: activity.answeredQuestions.length,
-      readQuestions: activity.readQuestions.length,
-      consecutiveDays: activity.consecutiveDays,
-    })
-  }, [user?.nickname, user?.phone])
-
-  // 샘플 캘린더 데이터
-  const calendarData = Array.from({ length: 10 }, (_, i) => {
-    const date = new Date(2025, 3, i + 1)
-    return {
-      date: date.toISOString().split("T")[0],
-      hasActivity: Math.random() > 0.3,
-      day: i + 1,
-    }
-  })
-
-  // 샘플 질문 데이터
-  const sampleQuestion = {
-    id: "q1",
-    title: "자바스크립트에서 클로저(Closure)란 무엇인가요?",
-    content: "자바스크립트의 클로저(Closure)에 대해 설명하고, 이것이 어떻게 활용될 수 있는지 예제와 함께 설명해주세요.",
-    category: "Frontend",
-    hint: "함수와 그 함수가 선언된 렉시컬 환경과의 조합을 생각해보세요.",
-  }
-
-  // 샘플 답변 데이터
-  const sampleAnswer = {
-    content:
-      "클로저는 함수와 그 함수가 선언된 렉시컬 환경의 조합입니다. 내부함수가 외부함수의 변수에 접근할 수 있는 것을 말합니다.",
-    timestamp: "2025-04-01T12:00:00Z",
-    isPublic: true,
-  }
-
-  const handleDateClick = (date: string, day: number) => {
-    setSelectedDate(date)
-    setIsDialogOpen(true)
-  }
-
-  if (!user) {
-    return (
-      <div className="container py-10">
-        <div className="max-w-md mx-auto text-center">
-          <h1 className="text-2xl font-bold mb-4 text-hanghae-text">나의 기록</h1>
-          <Card className="bg-hanghae-gray border-[#3a3e41] border-[1px]">
-            <CardContent className="py-8">
-              <p className="mb-4 text-hanghae-text/70">기록을 확인하려면 로그인이 필요합니다.</p>
-              <UserLoginDialog />
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    )
-  }
-
+// 서버 컴포넌트로 변경
+export default async function MyRecordsPage() {
   return (
-    <PageLayout title="나의 기록">
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-        <Card className="bg-hanghae-gray border-[#3a3e41] border-[1px]">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg text-hanghae-text">답변한 질문</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold text-white">{stats.answeredQuestions}개</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-hanghae-gray border-[#3a3e41] border-[1px]">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg text-hanghae-text">읽은 질문</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold text-white">{stats.readQuestions}개</p>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-hanghae-gray border-[#3a3e41] border-[1px]">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-lg text-hanghae-text">연속 활동일</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-3xl font-bold text-white">{stats.consecutiveDays}일</p>
-          </CardContent>
-        </Card>
-      </div>
-
+    <PageLayout title="챌린지 기록">
       <Card className="bg-hanghae-gray border-[#3a3e41] border-[1px]">
-        <CardHeader>
-          <CardTitle className="text-hanghae-text">활동 캘린더</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="grid grid-cols-10 gap-2">
-              {calendarData.map((day) => (
-                <div key={day.date} className="text-center">
-                  <button
-                    onClick={() => handleDateClick(day.date, day.day)}
-                    className={`h-10 w-10 mx-auto flex items-center justify-center rounded-full
-                      ${day.hasActivity ? "bg-main-red text-white" : "bg-hanghae-light text-hanghae-text/70"}`}
-                    title={day.date}
-                  >
-                    {day.day}
-                  </button>
-                  <div className="text-xs mt-1 text-hanghae-text/70">
-                    {new Date(day.date).getMonth() + 1}/{new Date(day.date).getDate()}
-                  </div>
-                </div>
-              ))}
-            </div>
-
-            <div className="flex items-center justify-center gap-4 text-sm">
-              <div className="flex items-center gap-1">
-                <div className="h-3 w-3 rounded-full bg-main-red"></div>
-                <span className="text-hanghae-text">활동함</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="h-3 w-3 rounded-full bg-hanghae-light"></div>
-                <span className="text-hanghae-text/70">활동 없음</span>
-              </div>
-            </div>
-          </div>
+        <CardContent className="flex items-center justify-center py-20">
+          <p className="text-xl text-hanghae-text/70 font-medium">- 준비중입니다 -</p>
         </CardContent>
       </Card>
-
-      {/* 날짜 클릭 시 모달 */}
-      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="text-xl">
-              Day {selectedDate ? new Date(selectedDate).getDate() : ""} -
-              {selectedDate
-                ? new Date(selectedDate).toLocaleDateString("ko-KR", { month: "long", day: "numeric" })
-                : ""}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-6 mt-4">
-            <div className="prose dark:prose-invert max-w-none text-hanghae-text">
-              <h3 className="text-lg font-medium">{sampleQuestion.title}</h3>
-              <p>{sampleQuestion.content}</p>
-            </div>
-
-            {/* 내 답변 */}
-            <div className="mt-6">
-              <h3 className="text-lg font-medium mb-3">내 답변</h3>
-              <div className="bg-hanghae-light p-4 rounded-md">
-                <div className="flex justify-between items-center mb-2">
-                  <span className="font-medium">{user.nickname}</span>
-                  <span className="text-xs text-hanghae-text/70">
-                    {new Date(sampleAnswer.timestamp).toLocaleDateString("ko-KR")}
-                  </span>
-                </div>
-                <p className="text-sm">{sampleAnswer.content}</p>
-              </div>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
     </PageLayout>
   )
 }
+
+/* 
+// 아래 코드는 추후 데이터 연동을 위해 보관
+async function getGoogleAuth() {
+  const { JWT } = google.auth
+
+  try {
+    // 하드코딩된 서비스 계정 정보 사용
+    const serviceAccountEmail = "id-99club-1day1challenge@club-1day1interview.iam.gserviceaccount.com"
+    const privateKey =
+      "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCyvZ21E4a254G3\nQJ5+38EQy1dDQky2d4qKqkjeUHmECzW94vchI1iXOO9eRqVJqaCCkCFJXhXKi8pc\n+mC/ujqrTseTz6QhzwEQNr+6NleMI9u62nQcc5NL2q1yFFDHxpaipVnURckt1ZL1\nUOsF+ntI+nT7EZaZsjKfeKTKePr+cDEwxu1mucnaMK5hKf7BCI9WrXe4qpQ+0Zb+\nVNSNjmhGVa7ogi9eXALuHTdEeP8YqLNZLMommUjcuE8OCcGwjuwWhtfxL1evNZwL\nPbH6omHGZrdPGcNdhyQBp7IZ2C0GWcMoqsvC2rtINwJJYYP7OjQyw6GvMaycB2VZ\nybcICfwXAgMBAAECggEAHYSQ8eF6ouQSmPfT9PHwyVw7WgEt+Ag/2eyLQiOaHcNY\nKba8xz02GSsu5KvYChU4S7ePt7UQ9jUlwzsaFS+lFrtY3EEzQt4Tt+DCwvbMeHlH\nhVEkUbqIfcNsV2WhfYx/Pfb+ob6wnaAit96YIZGfIIs0HG5oJ5O1Jn7fAA0ArloE\nCTnESe6QBedtW7sY1wSYRo5TvzDsVp0mTRT08SdUDwdja8vdcJjVjBAiRxl722HX\nSabX44yHQsyPNrS7g1NzP21acgQ8GVpkSW6ETSpSrE5/zFMYA07n71sbeVYpBIzn\n+FvTpRxQkIJpYflL0/GwU9g8C/3tp8hZYtgec+ZqoQKBgQDkF+jxdwIuPXWM//yy\noQF8ODRbVADymxPMDFPMHQhjsAKlFfsjRxkWdJpG1kdUYNUIRKMjmuEZzwImYO5s\nAvGyB9AaqeqF1npjhKGjIizDBTdAQwe5vnwEad/k6+8uAFMGIYW5yOoV2NLaKsri\nfJrzuLR9d34CxI/bOKa2VVsapwKBgQDIm+9VYHPXlgbEfT4gAkj9VKwZrznJMu1W\nhKYJvOTKsvU+BVoNkfHcQDsMdEFBZJkQKbRO8r5Wkg5isQjVJQRdilXn2Hvz8Nib\nVHgcejW2cLyB4nFyd4tXpSTDWkrdg3xCbSqa4h9AQBXLuG/wTUTdtiYilISgFGXX\nx1xCqqrxEQKBgQDNIFuTXA2P/CGNLmHZW0Z0qi8buw4nICPLq4Jo2+tBi3a1dHEo\nJrZ/JVnhPq9jSLoM930ndg/eH/a1ARMp+/PUwYX7lLeeqWXjvdGHXiKXOEeZ+S4n\ncxEg/v4lZ7Dv08bWiqsyi2dJQndNUJKo4JqReJiJBT9DyfX9lpMHAvgtnQKBgDLF\n3LZEGi2nSAE1HaMmUOjlJEW/5qU4oX8zRX7TcyimUJGo8xjaJlezXf6R8e4mEuNX\nWs5ce7YXc1KhMfYYT1mJaKKsVPrxqzDtGRVEDRImyF8rO8FX5kmBf6N919Lms21w\nicb3kidF0P5lqNcuB08CCfbYlhSZ9Qi+6WfqICexAoGBANFMQ9A51rOivA2SOOoR\nA8k6s5hz1wuIzBe3iULzMtBZ16re72XM1jixMMHMKLAZIUDIRj1Xj8ty8prTMA6M\n0ggbkAQckPcQppLUU//23RH+5wWyDZCv6oJTiQWQ3UcUmB9euHJ7LdBIihiW2mhf\n8ytvee76gEbNjpTcTStKHDoc\n-----END PRIVATE KEY-----\n"
+
+    // 서비스 계정 키 정보
+    const serviceAccountAuth = new JWT({
+      email: serviceAccountEmail,
+      key: privateKey,
+      scopes: ["https://www.googleapis.com/auth/spreadsheets"],
+    })
+
+    // 인증 테스트
+    await serviceAccountAuth.authorize()
+    return serviceAccountAuth
+  } catch (error) {
+    console.error("Google 인증 오류:", error)
+    throw new Error(`Google 인증 실패: ${error.message}`)
+  }
+}
+
+// 답변 통계 가져오기
+async function fetchAnswerStats(todayStr: string, currentDay: number) {
+  try {
+    const SPREADSHEET_ID = "1CAYCVNhTeF4F5lw7BmNboJTvgTqcc7QNpp0CcRdtkxA"
+    const SHEET_NAME = "답변"
+
+    const auth = await getGoogleAuth()
+    const sheets = google.sheets({ version: "v4", auth })
+
+    // 스프레드시트에서 답변 데이터 가져오기
+    const response = await sheets.spreadsheets.values.get({
+      spreadsheetId: SPREADSHEET_ID,
+      range: `${SHEET_NAME}!A:G`,
+    })
+
+    const rows = response.data.values || []
+
+    // 첫 번째 행은 헤더로 간주하고 제외
+    const answers = rows.slice(1).map((row) => {
+      return {
+        id: row[0] || "",
+        timestamp: row[1] || "",
+        questionId: row[2] || "",
+        nickname: row[3] || "",
+        phone: row[4] || "",
+        content: row[5] || "",
+        isPublic: row[6]?.toLowerCase() === "true",
+      }
+    })
+
+    // 1. 오늘 제출된 답변 수 계산 (unique answer ID)
+    const todayAnswers = answers.filter((answer) => {
+      const answerDate = new Date(answer.timestamp)
+      return answerDate.toISOString().split("T")[0] === todayStr
+    })
+
+    const uniqueAnswerIds = new Set(todayAnswers.map((answer) => answer.id))
+    const todayAnswersCount = uniqueAnswerIds.size
+
+    // 2. n일 연속 참여자 수 계산 (샘플 데이터로 대체)
+    // 실제로는 사용자별 참여 날짜를 분석해야 함
+    const consecutiveUsers = Math.max(5, Math.floor(Math.random() * 20)) // 샘플 데이터
+
+    // 3. 최근 답변 제출자 10명
+    const recentUsers = [...answers]
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+      .slice(0, 10)
+      .map((answer) => ({
+        nickname: answer.nickname,
+        timestamp: answer.timestamp,
+      }))
+
+    return {
+      todayAnswersCount,
+      consecutiveUsers,
+      recentUsers,
+    }
+  } catch (error) {
+    console.error("답변 통계 가져오기 오류:", error)
+    // 오류 발생 시 기본값 반환
+    return {
+      todayAnswersCount: 0,
+      consecutiveUsers: 0,
+      recentUsers: [],
+    }
+  }
+}
+*/

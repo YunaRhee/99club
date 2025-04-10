@@ -1,7 +1,6 @@
 "use server"
 
 import { google } from "googleapis"
-import { GOOGLE_SERVICE_ACCOUNT_EMAIL, GOOGLE_PRIVATE_KEY, GOOGLE_SPREADSHEET_ID, SHEET_NAMES } from "@/lib/config"
 
 // Update the Question interface to include the days field
 export interface Question {
@@ -20,9 +19,12 @@ async function getGoogleAuth() {
   const { JWT } = google.auth
 
   try {
-    // 환경 변수에서 서비스 계정 정보 사용
-    const serviceAccountEmail = GOOGLE_SERVICE_ACCOUNT_EMAIL
-    const privateKey = GOOGLE_PRIVATE_KEY
+    // 하드코딩된 서비스 계정 정보 사용
+    const serviceAccountEmail = "id-99club-1day1challenge@club-1day1interview.iam.gserviceaccount.com"
+    const privateKey =
+      "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCyvZ21E4a254G3\nQJ5+38EQy1dDQky2d4qKqkjeUHmECzW94vchI1iXOO9eRqVJqaCCkCFJXhXKi8pc\n+mC/ujqrTseTz6QhzwEQNr+6NleMI9u62nQcc5NL2q1yFFDHxpaipVnURckt1ZL1\nUOsF+ntI+nT7EZaZsjKfeKTKePr+cDEwxu1mucnaMK5hKf7BCI9WrXe4qpQ+0Zb+\nVNSNjmhGVa7ogi9eXALuHTdEeP8YqLNZLMommUjcuE8OCcGwjuwWhtfxL1evNZwL\nPbH6omHGZrdPGcNdhyQBp7IZ2C0GWcMoqsvC2rtINwJJYYP7OjQyw6GvMaycB2VZ\nybcICfwXAgMBAAECggEAHYSQ8eF6ouQSmPfT9PHwyVw7WgEt+Ag/2eyLQiOaHcNY\nKba8xz02GSsu5KvYChU4S7ePt7UQ9jUlwzsaFS+lFrtY3EEzQt4Tt+DCwvbMeHlH\nhVEkUbqIfcNsV2WhfYx/Pfb+ob6wnaAit96YIZGfIIs0HG5oJ5O1Jn7fAA0ArloE\nCTnESe6QBedtW7sY1wSYRo5TvzDsVp0mTRT08SdUDwdja8vdcJjVjBAiRxl722HX\nSabX44yHQsyPNrS7g1NzP21acgQ8GVpkSW6ETSpSrE5/zFMYA07n71sbeVYpBIzn\n+FvTpRxQkIJpYflL0/GwU9g8C/3tp8hZYtgec+ZqoQKBgQDkF+jxdwIuPXWM//yy\noQF8ODRbVADymxPMDFPMHQhjsAKlFfsjRxkWdJpG1kdUYNUIRKMjmuEZzwImYO5s\nAvGyB9AaqeqF1npjhKGjIizDBTdAQwe5vnwEad/k6+8uAFMGIYW5yOoV2NLaKsri\nfJrzuLR9d34CxI/bOKa2VVsapwKBgQDIm+9VYHPXlgbEfT4gAkj9VKwZrznJMu1W\nhKYJvOTKsvU+BVoNkfHcQDsMdEFBZJkQKbRO8r5Wkg5isQjVJQRdilXn2Hvz8Nib\nVHgcejW2cLyB4nFyd4tXpSTDWkrdg3xCbSqa4h9AQBXLuG/wTUTdtiYilISgFGXX\nx1xCqqrxEQKBgQDNIFuTXA2P/CGNLmHZW0Z0qi8buw4nICPLq4Jo2+tBi3a1dHEo\nJrZ/JVnhPq9jSLoM930ndg/eH/a1ARMp+/PUwYX7lLeeqWXjvdGHXiKXOEeZ+S4n\ncxEg/v4lZ7Dv08bWiqsyi2dJQndNUJKo4JqReJiJBT9DyfX9lpMHAvgtnQKBgDLF\n3LZEGi2nSAE1HaMmUOjlJEW/5qU4oX8zRX7TcyimUJGo8xjaJlezXf6R8e4mEuNX\nWs5ce7YXc1KhMfYYT1mJaKKsVPrxqzDtGRVEDRImyF8rO8FX5kmBf6N919Lms21w\nicb3kidF0P5lqNcuB08CCfbYlhSZ9Qi+6WfqICexAoGBANFMQ9A51rOivA2SOOoR\nA8k6s5hz1wuIzBe3iULzMtBZ16re72XM1jixMMKLAZIUDIRj1Xj8ty8prTMA6M\n0ggbkAQckPcQppLUU//23RH+5wWyDZCv6oJTiQWQ3UcUmB9euHJ7LdBIihiW2mhf\n8ytvee76gEbNjpTcTStKHDoc\n-----END PRIVATE KEY-----\n"
+
+    console.log("Google 인증 시도 중...")
 
     // 서비스 계정 키 정보
     const serviceAccountAuth = new JWT({
@@ -33,9 +35,16 @@ async function getGoogleAuth() {
 
     // 인증 테스트
     await serviceAccountAuth.authorize()
+    console.log("Google 인증 성공!")
     return serviceAccountAuth
   } catch (error) {
     console.error("Google 인증 오류:", error)
+    if (error.message) {
+      console.error("오류 메시지:", error.message)
+    }
+    if (error.stack) {
+      console.error("오류 스택:", error.stack)
+    }
     throw new Error(`Google 인증 실패: ${error.message}`)
   }
 }
@@ -43,8 +52,8 @@ async function getGoogleAuth() {
 // Update the fetchQuestionsFromSheet function to include the days field
 export async function fetchQuestionsFromSheet(): Promise<Question[]> {
   try {
-    const SPREADSHEET_ID = GOOGLE_SPREADSHEET_ID
-    const SHEET_NAME = SHEET_NAMES.QUESTION
+    const SPREADSHEET_ID = "1CAYCVNhTeF4F5lw7BmNboJTvgTqcc7QNpp0CcRdtkxA"
+    const SHEET_NAME = "Question"
 
     const auth = await getGoogleAuth()
     const sheets = google.sheets({ version: "v4", auth })
@@ -60,6 +69,12 @@ export async function fetchQuestionsFromSheet(): Promise<Question[]> {
     // 첫 번째 행은 헤더로 간주하고 제외
     const headers = rows[0] || ["id", "title", "content", "date", "category", "hint", "modelAnswer", "days"]
 
+    // 데이터가 없는 경우 샘플 데이터 반환
+    if (rows.length <= 1) {
+      console.error("구글 시트에 데이터가 없습니다. 샘플 데이터를 사용합니다.")
+      return sampleQuestions
+    }
+
     // 데이터 행 처리
     const questions = rows.slice(1).map((row) => {
       return {
@@ -74,6 +89,7 @@ export async function fetchQuestionsFromSheet(): Promise<Question[]> {
       }
     })
 
+    console.log(`구글 시트에서 ${questions.length}개의 질문을 가져왔습니다.`)
     return questions
   } catch (error) {
     console.error("구글 시트에서 질문 가져오기 오류:", error)
@@ -81,67 +97,6 @@ export async function fetchQuestionsFromSheet(): Promise<Question[]> {
     return sampleQuestions
   }
 }
-
-// 샘플 질문 데이터 (구글 시트 연결 실패 시 폴백용)
-const sampleQuestions: Question[] = [
-  {
-    id: "q1",
-    title: "자바스크립트에서 클로저(Closure)란 무엇인가요?",
-    content: "자바스크립트의 클로저(Closure)에 대해 설명하고, 이것이 어떻게 활용될 수 있는지 예제와 함께 설명해주세요.",
-    date: "2024-04-08",
-    category: "Frontend",
-    hint: "함수와 그 함수가 선언된 렉시컬 환경과의 조합을 생각해보세요.",
-    modelAnswer:
-      "클로저는 함수와 그 함수가 선언된 렉시컬 환경의 조합입니다. 내부함수가 외부함수의 변수에 접근할 수 있는 것을 말합니다. 이를 통해 데이터 은닉, 캡슐화, 팩토리 함수 등을 구현할 수 있습니다. 예를 들어, 카운터 함수를 만들 때 클로저를 활용하면 내부 상태를 외부에서 직접 접근하지 못하게 보호할 수 있습니다.",
-    days: 1,
-  },
-  {
-    id: "q2",
-    title: "RESTful API의 설계 원칙은 무엇인가요?",
-    content: "RESTful API를 설계할 때 고려해야 할 주요 원칙들에 대해 설명하고, 좋은 RESTful API의 예시를 들어주세요.",
-    date: "2024-04-09",
-    category: "Backend",
-    hint: "자원(Resource), 행위(Verb), 표현(Representation)의 개념을 고려해보세요.",
-    modelAnswer:
-      "RESTful API 설계의 주요 원칙은 1) 자원 기반 구조(URI로 자원 표현), 2) HTTP 메서드를 통한 행위 표현(GET, POST, PUT, DELETE), 3) 무상태성(Stateless), 4) 캐시 가능성, 5) 계층화된 시스템, 6) 통일된 인터페이스입니다. 좋은 예시로는 GitHub API가 있으며, 자원을 명확히 표현하고 적절한 HTTP 메서드를 사용합니다.",
-    days: 2,
-  },
-  // 나머지 샘플 데이터 업데이트
-  {
-    id: "q3",
-    title: "데이터베이스 인덱싱(Indexing)의 작동 원리와 장단점은?",
-    content: "데이터베이스에서 인덱싱이 어떻게 작동하는지 설명하고, 인덱스 사용의 장점과 단점에 대해 논의해주세요.",
-    date: "2024-04-10",
-    category: "Backend",
-    hint: "트리 구조와 검색 알고리즘을 생각해보세요.",
-    modelAnswer:
-      "데이터베이스 인덱싱은 테이블의 특정 열에 대한 검색 속도를 향상시키기 위해 별도의 데이터 구조(주로 B-트리 또는 B+트리)를 생성하는 것입니다. 장점으로는 검색 속도 향상, 정렬 및 그룹화 연산 최적화가 있고, 단점으로는 추가 저장 공간 필요, 삽입/수정/삭제 작업 시 오버헤드, 인덱스 관리 비용이 있습니다.",
-    days: 3,
-  },
-  {
-    id: "q4",
-    title: "React의 가상 DOM(Virtual DOM)이란 무엇인가요?",
-    content: "React의 가상 DOM 개념에 대해 설명하고, 이것이 어떻게 성능 최적화에 도움이 되는지 설명해주세요.",
-    date: "2024-04-11",
-    category: "Frontend",
-    hint: "실제 DOM 조작의 비용과 비교해보세요.",
-    modelAnswer:
-      "가상 DOM은 실제 DOM의 가벼운 복사본으로, 메모리에 존재하는 JavaScript 객체입니다. React는 상태 변경 시 먼저 가상 DOM을 업데이트하고, 이전 가상 DOM과 비교(Diffing)하여 실제로 변경된 부분만 실제 DOM에 적용합니다. 이를 통해 불필요한 DOM 조작을 줄이고 렌더링 성능을 최적화합니다.",
-    days: 4,
-  },
-  {
-    id: "q5",
-    title: "객체 지향 프로그래밍의 SOLID 원칙이란?",
-    content:
-      "객체 지향 프로그래밍의 SOLID 원칙 각각에 대해 설명하고, 실제 코드에서 어떻게 적용할 수 있는지 예시를 들어주세요.",
-    date: "2024-04-12",
-    category: "공통",
-    hint: "Single Responsibility, Open-Closed, Liskov Substitution, Interface Segregation, Dependency Inversion의 약자입니다.",
-    modelAnswer:
-      "SOLID 원칙은 1) 단일 책임 원칙(SRP): 클래스는 하나의 책임만 가져야 함, 2) 개방-폐쇄 원칙(OCP): 확장에는 열려있고 수정에는 닫혀있어야 함, 3) 리스코프 치환 원칙(LSP): 하위 타입은 상위 타입을 대체할 수 있어야 함, 4) 인터페이스 분리 원칙(ISP): 클라이언트는 사용하지 않는 인터페이스에 의존하지 않아야 함, 5) 의존성 역전 원칙(DIP): 추상화에 의존해야 하며 구체화에 의존하지 않아야 함을 의미합니다.",
-    days: 5,
-  },
-]
 
 // 오늘의 질문 가져오기
 export async function getTodayQuestion(dayCount = 1): Promise<Question> {
@@ -165,6 +120,58 @@ export async function getTodayQuestion(dayCount = 1): Promise<Question> {
     return sampleQuestions[index]
   }
 }
+
+// 샘플 질문 데이터 (구글 시트 연결 실패 시 폴백용)
+const sampleQuestions: Question[] = [
+  {
+    id: "q1",
+    title: "최신 기술 트렌드의 영향",
+    content:
+      "최근 5년간 발전한 기술 트렌드 중, 당신의 개발 방식 또는 학습 방식에 가장 큰 영향을 준 기술은 무엇인가요? 그 이유와, 실제로 적용해 보았거나 흥미롭게 느꼈던 경험이 있다면 함께 설명해 주세요.",
+    date: "2025-04-09",
+    category: "공통",
+    hint: '"기술 트렌드"는 AI, 클라우드, 프레임워크 변화, DevOps 도구 등 다양합니다.\n학습 방식이나 개발 철학에 영향을 준 경험 중심으로 이야기해 보세요.',
+    modelAnswer:
+      "<b>[첫 취업 준비생이라면?]</b><br>\n저는 최근 빠르게 발전하고 있는 <b>AI 기반 개발 도구(GitHub Copilot)</b>의 등장이 가장 인상 깊었습니다. 졸업 프로젝트를 진행하면서 처음 사용해 보았는데, 코드 자동완성을 넘어 테스트 함수나 반복 로직의 구조까지 제안해주는 점이 놀라웠습니다. 이 도구 덕분에 단순 구현보다 코드 구조와 설계에 더 집중하는 개발 습관을 기를 수 있었습니다. 실무에 들어가서도 이런 AI 보조 도구를 적극 활용하면 빠르게 성장할 수 있을 것 같다고 느꼈습니다.\n<br><br>\n<b>[현직 개발자로, 이직 면접이라면?]</b><br>\n가장 큰 영향을 준 기술은 CI/CD 자동화 환경과 GitHub Actions의 확산입니다. 반복되는 배포 과정과 QA 자동화를 줄이기 위해 팀 내에서 직접 Actions 워크플로우를 구성하고 운영해본 경험이 있습니다. 특히 QA 테스트 결과에 따라 PR을 자동으로 머지/반려하도록 설정하면서 개발 효율성과 팀 신뢰도가 높아졌습니다. 이러한 경험은 코드 작성뿐만 아니라 팀 내 개발 프로세스 개선까지 주도하는 역량을 키우는 데 도움이 되었습니다.",
+    days: 1,
+  },
+  {
+    id: "q2",
+    title: "UI 상태 관리",
+    content:
+      "UI 상태 관리에서 어려움을 겪었던 경험이 있다면, 어떤 방식으로 구조를 개선하거나 상태를 관리했는지 설명해 주세요. 그 과정에서 적용한 성능 최적화 기법이나 고민한 점이 있다면 함께 설명해 주세요.",
+    date: "2025-04-09",
+    category: "Frontend",
+    hint: "상태 관리란 단순한 useState부터 전역 상태 관리 라이브러리까지 포함됩니다. 어려웠던 점 → 개선 방향 → 성능 혹은 사용자 경험 향상을 연결해 보세요.",
+    modelAnswer:
+      '<b>[첫 취업 준비생이라면?]</b><br>\nReact로 프로젝트를 할 때, 여러 개의 모달과 필터 상태를 각각 useState로 관리하다 보니 코드가 복잡해지고 버그가 자주 발생했습니다. 이를 해결하기 위해 Context API를 도입해 전역 상태로 관리했고, 필요 시 useReducer로 구조화했습니다. 이 경험을 통해 상태를 단순히 "어디에 둘 것인가"가 아니라 "누가 언제 관리할 것인가"라는 관점으로 보게 되었습니다.\n<br><br>\n<b>[현직 개발자로, 이직 면접이라면?]</b><br>\n내부 어드민 시스템에서 유저 검색/필터/페이징 상태를 관리하던 중, 렌더링 최적화 문제가 발생했습니다. 각 컴포넌트가 서로 의존성이 많아 불필요한 리렌더링이 생겼기 때문입니다. 이를 해결하기 위해 zustand를 도입해 전역 상태를 분리하고, selector를 활용한 부분 구독 방식으로 성능을 개선했습니다. 리렌더링 횟수가 60% 이상 감소했고, 코드 유지보수성도 크게 개선되었습니다.',
+    days: 1,
+  },
+  {
+    id: "q3",
+    title: "동시성 문제 해결",
+    content:
+      "동시성 문제란 무엇이며, 이를 해결하기 위한 기본적인 전략을 설명해주세요. 실제 운영 환경에 적용한 사례가 있다면 함께 설명해 주어도 좋습니다.",
+    date: "2025-04-09",
+    category: "Backend",
+    hint: "동시성은 다중 사용자/요청이 동시에 자원에 접근할 때 발생합니다. 락(lock), 큐(queue), 트랜잭션 격리 수준 등의 개념을 활용해 본 경험을 떠올려 보세요.",
+    modelAnswer:
+      "<b>[첫 취업 준비생이라면?]</b><br>\n동시성 문제는 여러 사용자가 동시에 같은 자원에 접근할 때, 의도하지 않은 결과가 생기는 현상입니다. 예를 들어, 게시글 추천 수를 동시에 여러 명이 누르면 실제 추천 수보다 적거나 중복될 수 있습니다. 이를 해결하기 위해 DB에서 트랜잭션을 활용하거나, 어플리케이션 단에서는 락을 사용하는 방법을 학습했습니다. 개인 프로젝트에서 단순한 예시로 Python에서 threading을 사용한 카운터 처리에서 race condition을 실험하고 해결한 적이 있습니다.\n<br><br>\n<b>[현직 개발자로, 이직 면접이라면?]</b><br>\n실제 운영 중이던 커머스 서비스에서, 주문 수량 처리 중 동시성 이슈로 재고가 마이너스로 떨어지는 문제가 있었습니다. 해결을 위해 Redis를 활용한 <b>분산 락 시스템(Redlock)</b>을 도입했고, 동시에 트랜잭션의 격리 수준을 Read Committed → Repeatable Read로 조정했습니다. 이후에는 race condition 없이 재고 처리가 안정적으로 이루어졌고, 동시에 예약 처리가 필요한 기능에도 확장 적용할 수 있었습니다.",
+    days: 1,
+  },
+  {
+    id: "q4",
+    title: "갈등 중재 경험",
+    content:
+      "프로젝트 진행 중 협업 과정에서 갈등이나 의견 차이가 있었던 경험이 있다면, 이를 어떻게 해결했는지 설명해주세요. 그 과정에서 본인이 맡았던 역할과 결과도 함께 알려주세요.",
+    date: "2025-04-09",
+    category: "인성",
+    hint: '"갈등"은 코드 스타일, 일정 조율, 기술 선택 등 작은 것도 포함됩니다. 감정적 판단보다 협업과 결과 중심의 해결 노력을 강조해 보세요.',
+    modelAnswer:
+      "<b>[첫 취업 준비생이라면?]</b><br>\n팀 프로젝트 중 백엔드 API 명세를 문서화하는 방식을 두고 의견 차이가 있었습니다. 어떤 팀원은 Notion, 저는 Swagger UI를 주장했죠. 갈등을 줄이기 위해 각 방식의 장단점을 정리해 공유하고, 실제 구현 테스트도 함께 해보자는 제안을 했습니다. 결과적으로 Swagger가 자동화와 유지보수 측면에서 낫다는 데 모두 동의했고, 팀워크도 자연스럽게 회복되었습니다.\n<br><br>\n<b>[현직 개발자로, 이직 면접이라면?]</b><br>\n코드 리뷰 과정에서 주니어 개발자와 네이밍 규칙을 두고 의견이 충돌한 적이 있습니다. 단순히 지적하기보다, 그 규칙이 왜 필요한지 설명하고 예시를 제시했습니다. 이후에는 리뷰 문화에 대한 가이드를 팀 내에 문서화했고, 리뷰 가이드 세션도 주도했습니다. 개인적인 의견 차이에서 시작된 갈등을 협업 문화 개선의 기회로 바꾼 경험이었습니다.",
+    days: 1,
+  },
+]
 
 // 모든 질문 가져오기
 export async function getAllQuestions(): Promise<Question[]> {

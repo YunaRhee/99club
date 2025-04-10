@@ -3,46 +3,53 @@ import { NextResponse } from "next/server"
 
 // 환경 변수에서 스프레드시트 ID와 인증 정보 가져오기
 const SPREADSHEET_ID = "1CAYCVNhTeF4F5lw7BmNboJTvgTqcc7QNpp0CcRdtkxA"
-const SHEET_NAME = "User"
+const SHEET_NAME = "디버그"
 
-export async function POST(request: Request) {
+export async function GET() {
   try {
-    const body = await request.json()
-    const { userId, nickname, phone, password, profileIcon, createdAt } = body
-
-    // 필수 필드 검증
-    if (!userId || !nickname || !phone || !password) {
-      return NextResponse.json({ success: false, message: "필수 필드가 누락되었습니다." }, { status: 400 })
-    }
-
     // Google Sheets API 인증 설정
     const auth = await getGoogleAuth()
     const sheets = google.sheets({ version: "v4", auth })
 
-    // 스프레드시트에 데이터 추가
+    // 현재 시간
+    const now = new Date().toISOString()
+
+    // 디버그 시트 확인 및 생성
     try {
-      // 시트가 있는지 확인하고 없으면 생성
       await checkAndCreateSheet(sheets, SPREADSHEET_ID, SHEET_NAME)
 
+      // 테스트 데이터 추가
       const appendResponse = await sheets.spreadsheets.values.append({
         spreadsheetId: SPREADSHEET_ID,
-        range: `${SHEET_NAME}!A:F`,
+        range: `${SHEET_NAME}!A:C`,
         valueInputOption: "USER_ENTERED",
         requestBody: {
-          values: [[userId, nickname, phone, password, profileIcon || "🐦", createdAt]],
+          values: [["debug_test", now, "테스트 데이터"]],
         },
       })
 
       return NextResponse.json({
         success: true,
-        message: "사용자 정보가 성공적으로 저장되었습니다.",
+        message: "디버그 테스트 성공",
+        details: {
+          updatedRange: appendResponse.data.updates?.updatedRange,
+          updatedCells: appendResponse.data.updates?.updatedCells,
+          spreadsheetId: SPREADSHEET_ID,
+          sheetName: SHEET_NAME,
+        },
       })
-    } catch (apiError) {
-      console.error("Google Sheets API 오류:", apiError)
-      throw new Error(`Google Sheets API 오류: ${apiError.message}`)
+    } catch (error) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "디버그 테스트 실패",
+          error: error.message,
+        },
+        { status: 500 },
+      )
     }
   } catch (error) {
-    console.error("사용자 정보 저장 오류:", error)
+    console.error("디버그 API 오류:", error)
     return NextResponse.json(
       {
         success: false,
@@ -82,41 +89,52 @@ async function getGoogleAuth() {
 
 // 스프레드시트 구조 확인 및 생성 함수
 async function checkAndCreateSheet(sheets, spreadsheetId, sheetName) {
-  // 스프레드시트 정보 가져오기
-  const spreadsheet = await sheets.spreadsheets.get({
-    spreadsheetId,
-  })
-
-  // 시트가 있는지 확인
-  const sheetExists = spreadsheet.data.sheets?.some((sheet) => sheet.properties?.title === sheetName)
-
-  if (!sheetExists) {
-    // 시트 생성
-    await sheets.spreadsheets.batchUpdate({
+  try {
+    // 스프레드시트 정보 가져오기
+    const spreadsheet = await sheets.spreadsheets.get({
       spreadsheetId,
-      requestBody: {
-        requests: [
-          {
-            addSheet: {
-              properties: {
-                title: sheetName,
+    })
+
+    // 시트가 있는지 확인
+    const sheetExists = spreadsheet.data.sheets?.some((sheet) => sheet.properties?.title === sheetName)
+
+    if (!sheetExists) {
+      console.log(`시트 "${sheetName}"가 존재하지 않습니다. 새로 생성합니다.`)
+
+      // 시트 생성
+      await sheets.spreadsheets.batchUpdate({
+        spreadsheetId,
+        requestBody: {
+          requests: [
+            {
+              addSheet: {
+                properties: {
+                  title: sheetName,
+                },
               },
             },
-          },
-        ],
-      },
-    })
+          ],
+        },
+      })
 
-    // 헤더 추가
-    await sheets.spreadsheets.values.update({
-      spreadsheetId,
-      range: `${sheetName}!A1:F1`,
-      valueInputOption: "RAW",
-      requestBody: {
-        values: [["userId", "nickname", "phone", "password", "profileIcon", "createdAt"]],
-      },
-    })
+      // 헤더 추가
+      await sheets.spreadsheets.values.update({
+        spreadsheetId,
+        range: `${sheetName}!A1:C1`,
+        valueInputOption: "RAW",
+        requestBody: {
+          values: [["id", "timestamp", "content"]],
+        },
+      })
 
-    console.log(`시트 "${sheetName}"가 생성되었습니다.`)
+      console.log(`시트 "${sheetName}"가 생성되었습니다.`)
+    } else {
+      console.log(`시트 "${sheetName}"가 이미 존재합니다.`)
+    }
+
+    return true
+  } catch (error) {
+    console.error("시트 확인/생성 오류:", error)
+    throw new Error(`시트 확인/생성 실패: ${error.message}`)
   }
 }

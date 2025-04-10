@@ -2,7 +2,7 @@
 
 import Link from "next/link"
 import { usePathname } from "next/navigation"
-import { Home, List } from "lucide-react"
+import { Home, List, BarChart } from "lucide-react"
 import { useMobile } from "@/hooks/use-mobile"
 
 export default function MobileNavigation() {
@@ -27,6 +27,13 @@ export default function MobileNavigation() {
         >
           <List className="h-5 w-5" />
           <span className="text-xs mt-1">질문 모음</span>
+        </Link>
+        <Link
+          href="/my-records"
+          className={`flex flex-col items-center justify-center w-full h-full ${pathname === "/my-records" ? "text-primary" : "text-muted-foreground"}`}
+        >
+          <BarChart className="h-5 w-5" />
+          <span className="text-xs mt-1">기록 보기</span>
         </Link>
       </div>
     </div>

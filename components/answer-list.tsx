@@ -6,7 +6,10 @@ interface AnswerListProps {
 }
 
 export default function AnswerList({ answers }: AnswerListProps) {
-  if (answers.length === 0) {
+  // 공개된 답변만 필터링하여 표시
+  const publicAnswers = answers.filter((answer) => answer.isPublic)
+
+  if (publicAnswers.length === 0) {
     return (
       <Card>
         <CardHeader>
@@ -21,7 +24,7 @@ export default function AnswerList({ answers }: AnswerListProps) {
 
   return (
     <div className="space-y-4">
-      {answers.map((answer) => (
+      {publicAnswers.map((answer) => (
         <Card key={answer.id}>
           <CardHeader className="pb-2">
             <CardTitle className="text-lg flex justify-between items-center">

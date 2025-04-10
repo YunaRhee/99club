@@ -1,72 +1,72 @@
 import { google } from "googleapis"
 import { NextResponse } from "next/server"
 
+// 환경 변수에서 스프레드시트 ID와 인증 정보 가져오기
 const SPREADSHEET_ID = "1CAYCVNhTeF4F5lw7BmNboJTvgTqcc7QNpp0CcRdtkxA"
-const SHEET_NAME = "답변"
+const SHEET_NAME = "Question"
 
-export async function GET(request: Request) {
+export async function POST(request: Request) {
   try {
-    // URL에서 쿼리 파라미터 추출
-    const { searchParams } = new URL(request.url)
-    const questionId = searchParams.get("questionId")
-    const publicOnly = searchParams.get("publicOnly") === "true"
-    const nickname = searchParams.get("nickname")
+    const body = await request.json()
+    const questions = body.questions || []
+
+    if (!questions || questions.length === 0) {
+      return NextResponse.json(
+        {
+          success: false,
+          message: "질문 데이터가 없습니다.",
+        },
+        { status: 400 },
+      )
+    }
 
     // Google Sheets API 인증 설정
     const auth = await getGoogleAuth()
     const sheets = google.sheets({ version: "v4", auth })
 
-    // 스프레드시트에서 답변 데이터 가져오기
-    const response = await sheets.spreadsheets.values.get({
+    // 시트가 있는지 확인하고 없으면 생성
+    await checkAndCreateSheet(sheets, SPREADSHEET_ID, SHEET_NAME)
+
+    // 질문 데이터 준비
+    const values = questions.map((question) => [
+      question.id,
+      question.title,
+      question.content,
+      question.date,
+      question.category,
+      question.hint || "",
+      question.modelAnswer || "",
+      question.days || "",
+    ])
+
+    // 스프레드시트에 데이터 추가
+    const appendResponse = await sheets.spreadsheets.values.append({
       spreadsheetId: SPREADSHEET_ID,
-      range: `${SHEET_NAME}!A:G`,
+      range: `${SHEET_NAME}!A:H`,
+      valueInputOption: "USER_ENTERED",
+      requestBody: {
+        values: values,
+      },
     })
 
-    const rows = response.data.values || []
-
-    // 첫 번째 행은 헤더로 간주하고 제외
-    const headers = rows[0] || ["id", "timestamp", "questionId", "nickname", "phone", "content", "isPublic"]
-    // 데이터 행 처리 부분에서 timestamp 처리 방식 확인
-    let answers = rows.slice(1).map((row) => {
-      return {
-        id: row[0] || "",
-        timestamp: row[1] || "",
-        questionId: row[2] || "",
-        nickname: row[3] || "",
-        phone: row[4] || "",
-        content: row[5] || "",
-        isPublic: row[6]?.toLowerCase() === "true", // Ensure boolean conversion
-      }
+    return NextResponse.json({
+      success: true,
+      message: `${questions.length}개의 질문이 성공적으로 저장되었습니다.`,
+      details: {
+        updatedRange: appendResponse.data.updates?.updatedRange,
+        updatedCells: appendResponse.data.updates?.updatedCells,
+      },
     })
-
-    // 필터링 적용
-    if (questionId) {
-      answers = answers.filter((answer) => answer.questionId === questionId)
-    }
-
-    // API 라우트에서 공개된 답변만 필터링하는 로직 확인
-
-    // 필터링 적용 부분 확인
-    if (publicOnly) {
-      answers = answers.filter((answer) => answer.isPublic === true) // Strict comparison
-    }
-
-    // 이미 publicOnly 파라미터에 따라 필터링하는 로직이 있으므로 추가 수정 필요 없음
-
-    if (nickname) {
-      answers = answers.filter((answer) => answer.nickname === nickname)
-    }
-
-    // 시간순 정렬 부분 유지
-    // Sort answers by timestamp, most recent first
-    answers.sort((a, b) => {
-      return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-    })
-
-    return NextResponse.json({ success: true, data: answers })
   } catch (error) {
-    console.error("답변 가져오기 오류:", error)
-    return NextResponse.json({ success: false, message: "서버 오류가 발생했습니다." }, { status: 500 })
+    console.error("질문 일괄 저장 오류:", error)
+    return NextResponse.json(
+      {
+        success: false,
+        message: "서버 오류가 발생했습니다.",
+        error: error.message,
+      },
+      { status: 500 },
+    )
   }
 }
 
@@ -93,5 +93,46 @@ async function getGoogleAuth() {
   } catch (error) {
     console.error("Google 인증 오류:", error)
     throw new Error(`Google 인증 실패: ${error.message}`)
+  }
+}
+
+// 스프레드시트 구조 확인 및 생성 함수
+async function checkAndCreateSheet(sheets, spreadsheetId, sheetName) {
+  // 스프레드시트 정보 가져오기
+  const spreadsheet = await sheets.spreadsheets.get({
+    spreadsheetId,
+  })
+
+  // 시트가 있는지 확인
+  const sheetExists = spreadsheet.data.sheets?.some((sheet) => sheet.properties?.title === sheetName)
+
+  if (!sheetExists) {
+    // 시트 생성
+    await sheets.spreadsheets.batchUpdate({
+      spreadsheetId,
+      requestBody: {
+        requests: [
+          {
+            addSheet: {
+              properties: {
+                title: sheetName,
+              },
+            },
+          },
+        ],
+      },
+    })
+
+    // 헤더 추가
+    await sheets.spreadsheets.values.update({
+      spreadsheetId,
+      range: `${SHEET_NAME}!A1:H1`,
+      valueInputOption: "RAW",
+      requestBody: {
+        values: [["id", "title", "content", "date", "category", "hint", "modelAnswer", "days"]],
+      },
+    })
+
+    console.log(`시트 "${sheetName}"가 생성되었습니다.`)
   }
 }

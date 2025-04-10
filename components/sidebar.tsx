@@ -24,6 +24,13 @@ export default function Sidebar() {
           <span>지난 면접 질문</span>
         </Link>
 
+        <Link
+          href="/my-records"
+          className={`flex items-center py-3 px-4 transition-colors hover:bg-hanghae-light ${pathname.startsWith("/my-records") ? "border-l-4 border-main-red bg-hanghae-light" : ""}`}
+        >
+          <span>챌린지 기록 보기</span>
+        </Link>
+
         <a
           href="https://99club-challenge-guide.oopy.io/"
           target="_blank"
@@ -35,10 +42,12 @@ export default function Sidebar() {
         </a>
       </div>
 
-      {/* Separated banner with specific height and margin */}
+      {/* 아티클 배너 링크 업데이트 */}
       <div className="mt-20">
         <a
-          href="#"
+          href="https://99clubarticle.vercel.app/"
+          target="_blank"
+          rel="noopener noreferrer"
           className="block w-full h-[65px] rounded-[16px] border border-main-dark-red bg-hanghae-light/50 flex items-center justify-center transition-colors hover:bg-hanghae-light"
         >
           <span className="text-sm font-medium">오늘의 아티클 보러 가기</span>

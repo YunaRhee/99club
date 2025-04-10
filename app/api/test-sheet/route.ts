@@ -1,72 +1,105 @@
 import { google } from "googleapis"
 import { NextResponse } from "next/server"
 
+// 환경 변수에서 스프레드시트 ID와 인증 정보 가져오기
 const SPREADSHEET_ID = "1CAYCVNhTeF4F5lw7BmNboJTvgTqcc7QNpp0CcRdtkxA"
-const SHEET_NAME = "답변"
+const SHEET_NAME = "테스트"
 
-export async function GET(request: Request) {
+export async function GET() {
   try {
-    // URL에서 쿼리 파라미터 추출
-    const { searchParams } = new URL(request.url)
-    const questionId = searchParams.get("questionId")
-    const publicOnly = searchParams.get("publicOnly") === "true"
-    const nickname = searchParams.get("nickname")
-
     // Google Sheets API 인증 설정
     const auth = await getGoogleAuth()
     const sheets = google.sheets({ version: "v4", auth })
 
-    // 스프레드시트에서 답변 데이터 가져오기
-    const response = await sheets.spreadsheets.values.get({
-      spreadsheetId: SPREADSHEET_ID,
-      range: `${SHEET_NAME}!A:G`,
-    })
+    // 현재 시간
+    const now = new Date().toISOString()
+    const testId = `test_${Date.now()}`
 
-    const rows = response.data.values || []
+    try {
+      // 1. 스프레드시트 정보 가져오기
+      const spreadsheet = await sheets.spreadsheets.get({
+        spreadsheetId: SPREADSHEET_ID,
+      })
 
-    // 첫 번째 행은 헤더로 간주하고 제외
-    const headers = rows[0] || ["id", "timestamp", "questionId", "nickname", "phone", "content", "isPublic"]
-    // 데이터 행 처리 부분에서 timestamp 처리 방식 확인
-    let answers = rows.slice(1).map((row) => {
-      return {
-        id: row[0] || "",
-        timestamp: row[1] || "",
-        questionId: row[2] || "",
-        nickname: row[3] || "",
-        phone: row[4] || "",
-        content: row[5] || "",
-        isPublic: row[6]?.toLowerCase() === "true", // Ensure boolean conversion
+      // 2. 시트 목록 가져오기
+      const sheetsList = spreadsheet.data.sheets?.map((sheet) => sheet.properties?.title) || []
+
+      // 3. 시트가 없으면 생성
+      if (!sheetsList.includes(SHEET_NAME)) {
+        await sheets.spreadsheets.batchUpdate({
+          spreadsheetId: SPREADSHEET_ID,
+          requestBody: {
+            requests: [
+              {
+                addSheet: {
+                  properties: {
+                    title: SHEET_NAME,
+                  },
+                },
+              },
+            ],
+          },
+        })
+
+        // 헤더 추가
+        await sheets.spreadsheets.values.update({
+          spreadsheetId: SPREADSHEET_ID,
+          range: `${SHEET_NAME}!A1:C1`,
+          valueInputOption: "RAW",
+          requestBody: {
+            values: [["id", "timestamp", "content"]],
+          },
+        })
       }
-    })
 
-    // 필터링 적용
-    if (questionId) {
-      answers = answers.filter((answer) => answer.questionId === questionId)
+      // 4. 데이터 추가
+      const appendResponse = await sheets.spreadsheets.values.append({
+        spreadsheetId: SPREADSHEET_ID,
+        range: `${SHEET_NAME}!A:C`,
+        valueInputOption: "USER_ENTERED",
+        requestBody: {
+          values: [[testId, now, "테스트 데이터"]],
+        },
+      })
+
+      return NextResponse.json({
+        success: true,
+        message: "테스트 성공",
+        details: {
+          spreadsheetTitle: spreadsheet.data.properties?.title,
+          sheetsList: sheetsList,
+          updatedRange: appendResponse.data.updates?.updatedRange,
+          updatedCells: appendResponse.data.updates?.updatedCells,
+        },
+      })
+    } catch (error) {
+      console.error("Google Sheets API 오류:", error)
+
+      // 오류 세부 정보 로깅
+      if (error.response) {
+        console.error("API 응답 오류:", error.response.data)
+      }
+
+      return NextResponse.json(
+        {
+          success: false,
+          message: "Google Sheets API 오류",
+          error: error.message,
+          details: error.response?.data || "세부 정보 없음",
+        },
+        { status: 500 },
+      )
     }
-
-    // API 라우트에서 공개된 답변만 필터링하는 로직 확인
-
-    // 필터링 적용 부분 확인
-    if (publicOnly) {
-      answers = answers.filter((answer) => answer.isPublic === true) // Strict comparison
-    }
-
-    // 이미 publicOnly 파라미터에 따라 필터링하는 로직이 있으므로 추가 수정 필요 없음
-
-    if (nickname) {
-      answers = answers.filter((answer) => answer.nickname === nickname)
-    }
-
-    // 시간순 정렬 부분 유지
-    // Sort answers by timestamp, most recent first
-    answers.sort((a, b) => {
-      return new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
-    })
-
-    return NextResponse.json({ success: true, data: answers })
   } catch (error) {
-    console.error("답변 가져오기 오류:", error)
-    return NextResponse.json({ success: false, message: "서버 오류가 발생했습니다." }, { status: 500 })
+    console.error("테스트 API 오류:", error)
+    return NextResponse.json(
+      {
+        success: false,
+        message: "서버 오류가 발생했습니다.",
+        error: error.message,
+      },
+      { status: 500 },
+    )
   }
 }
 

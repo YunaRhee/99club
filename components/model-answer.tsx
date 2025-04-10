@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { Card, CardContent } from "@/components/ui/card"
-import { ChevronRight } from "lucide-react"
+import { ChevronRight, ChevronDown } from "lucide-react"
 
 interface ModelAnswerProps {
   modelAnswer: string
@@ -18,17 +18,29 @@ export default function ModelAnswer({ modelAnswer }: ModelAnswerProps) {
       const now = new Date()
       const releaseHour = 20 // 저녁 8시
 
-      if (now.getHours() >= releaseHour) {
+      // 오늘 오전 9시
+      const today9AM = new Date(now)
+      today9AM.setHours(9, 0, 0, 0)
+
+      // 오늘 저녁 8시
+      const today8PM = new Date(now)
+      today8PM.setHours(releaseHour, 0, 0, 0)
+
+      // 어제 저녁 8시
+      const yesterday8PM = new Date(today8PM)
+      yesterday8PM.setDate(yesterday8PM.getDate() - 1)
+
+      // 현재 시간이 오늘 오전 9시 이전이면 어제 저녁 8시와 비교, 아니면 오늘 저녁 8시와 비교
+      const compareTime = now < today9AM ? yesterday8PM : today8PM
+
+      if (now >= compareTime) {
         setCanView(true)
         setTimeRemaining("")
       } else {
         setCanView(false)
 
         // 남은 시간 계산 (hh:mm:ss 형식)
-        const targetTime = new Date(now)
-        targetTime.setHours(releaseHour, 0, 0, 0)
-
-        const diffMs = targetTime.getTime() - now.getTime()
+        const diffMs = compareTime.getTime() - now.getTime()
         const hours = Math.floor(diffMs / (1000 * 60 * 60))
         const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
         const seconds = Math.floor((diffMs % (1000 * 60)) / 1000)
@@ -45,6 +57,11 @@ export default function ModelAnswer({ modelAnswer }: ModelAnswerProps) {
     return () => clearInterval(interval)
   }, [])
 
+  // HTML 문자열을 안전하게 렌더링하는 함수
+  const renderHTML = (htmlString: string) => {
+    return { __html: htmlString }
+  }
+
   return (
     <div className="mt-6">
       <div
@@ -57,7 +74,8 @@ export default function ModelAnswer({ modelAnswer }: ModelAnswerProps) {
         <div className="text-hanghae-text/70 flex items-center">
           {canView ? (
             <>
-              확인하기 <ChevronRight className="h-4 w-4 ml-1" />
+              확인하기{" "}
+              {showAnswer ? <ChevronDown className="h-4 w-4 ml-1" /> : <ChevronRight className="h-4 w-4 ml-1" />}
             </>
           ) : (
             timeRemaining
@@ -69,7 +87,11 @@ export default function ModelAnswer({ modelAnswer }: ModelAnswerProps) {
         <Card className="mt-4 bg-hanghae-gray border-[#3a3e41] border-[1px]">
           <CardContent className="pt-4">
             <div className="prose dark:prose-invert max-w-none text-hanghae-text">
-              <p>{modelAnswer || "이 질문에 대한 모범 답변이 준비되지 않았습니다."}</p>
+              {modelAnswer ? (
+                <div dangerouslySetInnerHTML={renderHTML(modelAnswer)} />
+              ) : (
+                <p>이 질문에 대한 모범 답변이 준비되지 않았습니다.</p>
+              )}
             </div>
           </CardContent>
         </Card>

@@ -5,7 +5,6 @@ import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
 import { generateUserId, getUserActivity, saveUserToSpreadsheet, getRandomProfileIcon } from "@/lib/user-activity"
 import { useRouter } from "next/navigation"
-import { ADMIN_PASSWORD } from "@/lib/config"
 
 type User = {
   userId: string
@@ -115,8 +114,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   const adminLogin = (password: string) => {
-    // 환경 변수에서 관리자 비밀번호 사용
-    if (password === ADMIN_PASSWORD) {
+    // 실제 구현에서는 서버에서 검증해야 합니다
+    if (password === "admin1234") {
       const adminUserId = "admin_" + Date.now()
       setUser({ userId: adminUserId, nickname: "관리자" })
       setIsAdmin(true)

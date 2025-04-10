@@ -110,6 +110,63 @@ export default function DebugTool() {
     }
   }
 
+  // 구글 시트 테스트 함수 추가
+  const testGoogleSheets = async () => {
+    setIsLoading(true)
+    setTestResult(null)
+    try {
+      const response = await fetch("/api/debug-sheets")
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}, statusText: ${response.statusText}`)
+      }
+
+      const data = await response.json()
+
+      setTestResult({
+        success: data.success,
+        message: data.success ? "구글 시트 연결 테스트 성공" : "구글 시트 연결 테스트 실패",
+        details: data,
+      })
+    } catch (error) {
+      setTestResult({
+        success: false,
+        message: "구글 시트 연결 테스트 실패: " + error.message,
+        error: error,
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
+  const testSimpleSheet = async () => {
+    setIsLoading(true)
+    setTestResult(null)
+    try {
+      const response = await fetch("/api/test-sheet")
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}, statusText: ${response.statusText}`)
+      }
+
+      const data = await response.json()
+
+      setTestResult({
+        success: data.success,
+        message: data.success ? "간단한 시트 테스트 성공" : "간단한 시트 테스트 실패",
+        details: data,
+      })
+    } catch (error) {
+      setTestResult({
+        success: false,
+        message: "간단한 시트 테스트 실패: " + error.message,
+        error: error,
+      })
+    } finally {
+      setIsLoading(false)
+    }
+  }
+
   return (
     <div className="fixed bottom-4 right-4 z-50">
       <Collapsible open={isOpen} onOpenChange={setIsOpen} className="w-80">
@@ -148,6 +205,12 @@ export default function DebugTool() {
                 </Button>
                 <Button size="sm" variant="outline" onClick={testApiRetrieval} disabled={isLoading}>
                   {isLoading ? <RefreshCw className="h-3 w-3 animate-spin" /> : "답변 조회 테스트"}
+                </Button>
+                <Button size="sm" variant="outline" onClick={testGoogleSheets} disabled={isLoading}>
+                  {isLoading ? <RefreshCw className="h-3 w-3 animate-spin" /> : "구글 시트 테스트"}
+                </Button>
+                <Button size="sm" variant="outline" onClick={testSimpleSheet} disabled={isLoading}>
+                  {isLoading ? <RefreshCw className="h-3 w-3 animate-spin" /> : "간단한 시트 테스트"}
                 </Button>
               </div>
 
