@@ -1,8 +1,7 @@
-import { type NextRequest, NextResponse } from "next/server"
+import { NextResponse } from "next/server"
 import { getQuestionById } from "@/lib/server-api"
 
-// Next.js App Router에서 요구하는 정확한 함수 시그니처 사용
-export async function GET(request: NextRequest, { params }: { params: { id: string } }): Promise<NextResponse> {
+export async function GET(request: Request, { params }: { params: { id: string } }) {
   try {
     const id = params.id
     const question = await getQuestionById(id)
@@ -23,11 +22,15 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
     })
   } catch (error) {
     console.error("질문 API 오류:", error)
+
+    // 오류 메시지 추출 방식 단순화
+    const errorMessage = error instanceof Error ? error.message : String(error)
+
     return NextResponse.json(
       {
         success: false,
         message: "서버 오류가 발생했습니다.",
-        error: error instanceof Error ? error.message : String(error),
+        error: errorMessage,
       },
       { status: 500 },
     )
