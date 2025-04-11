@@ -222,10 +222,12 @@ export default function Home() {
       let hasChanges = false
 
       // 각 카테고리별 질문 확인 상태 로드
-      Object.keys(hardcodedQuestions).forEach((key) => {
-        if (typeof hardcodedQuestions[key] === "object" && hardcodedQuestions[key] !== null) {
-          const question = hardcodedQuestions[key]
-          const category = question.category || getCategoryFromKey(key)
+      const categoryKeys = ["frontend", "backend", "common", "personality"]
+
+      categoryKeys.forEach((key) => {
+        if (questions[key]) {
+          const question = questions[key]
+          const category = getCategoryFromKey(key)
           const storageKey = `question_read_${question.id}_${category}`
 
           if (localStorage.getItem(storageKey) === "true") {

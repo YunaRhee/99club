@@ -31,12 +31,14 @@ export default function QuestionCard({ question, category, onConfirmRead }: Ques
         setIsConfirmed(true)
         // 이미 확인된 질문이면 부모 컴포넌트에도 알림
         if (onConfirmRead) {
-          onConfirmRead(category)
+          setTimeout(() => {
+            onConfirmRead(category)
+          }, 0)
         }
       }
       setIsLoaded(true)
     }
-  }, [question.id, category, onConfirmRead])
+  }, [question.id, category])
 
   // 카테고리별 배지 색상 설정
   const getBadgeClass = () => {
