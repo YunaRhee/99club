@@ -20,12 +20,7 @@ export default function Navigation() {
       <div className="container flex h-16 items-center justify-between">
         <div className="flex items-center gap-6 md:gap-10">
           <Link href="/" className="flex items-center">
-            <Image
-              src="https://hanghae99.spartacodingclub.kr/_next/image?url=%2F_next%2Fstatic%2Fmedia%2Flogo.6f8c4c39.png&w=96&q=75"
-              alt="항해99"
-              width={96}
-              height={24}
-            />
+            <Image src="/logo.png" alt="항해99" width={96} height={24} />
           </Link>
           <span className="hidden md:block text-sm text-hanghae-text">
             "{quote.text}" - {quote.author}

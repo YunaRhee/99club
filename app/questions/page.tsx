@@ -305,16 +305,17 @@ export default function QuestionsPage() {
     }
   }
 
+  // 모범 답변 볼 수 있는지 확인하는 로직 수정
   const handleQuestionClick = async (question: Question) => {
     setSelectedQuestion(question)
     setShowModelAnswer(false) // 모달 열릴 때 모범 답변 숨기기
 
-    // 오늘의 문제(Day 2)인지 확인하고 모범 답변 볼 수 있는지 체크
-    const isTodayQuestion = question.days === 2
-    if (isTodayQuestion) {
+    // Day3 문제인지 확인하고 모범 답변 볼 수 있는지 체크
+    const isDay3Question = question.days === 3
+    if (isDay3Question) {
       setCanViewAnswer(canViewModelAnswer())
     } else {
-      // 이전 날짜 문제는 항상 볼 수 있음
+      // Day1, Day2 문제는 항상 볼 수 있음
       setCanViewAnswer(true)
     }
 
@@ -356,10 +357,10 @@ export default function QuestionsPage() {
     }
   }, [selectedQuestion])
 
-  // 시간 업데이트를 위한 타이머 설정
+  // 시간 업데이트를 위한 타이머 설정 부분도 수정
   useEffect(() => {
-    if (selectedQuestion?.days === 2) {
-      // 오늘의 문제인 경우에만 타이머 설정
+    if (selectedQuestion?.days === 3) {
+      // Day3 문제인 경우에만 타이머 설정
       calculateTimeRemaining()
       const timer = setInterval(() => {
         const remaining = calculateTimeRemaining()
