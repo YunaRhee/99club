@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import ModelAnswer from "@/components/model-answer"
 import PageLayout from "@/components/page-layout"
 import { Clock } from "lucide-react"
+import { getTimeRemainingForSubmission } from "@/lib/utils"
 
 export default function Home() {
   // 하드코딩된 Day 2 질문들 - ID 형식 수정
@@ -182,38 +183,29 @@ export default function Home() {
   const [timeRemaining, setTimeRemaining] = useState<string>("")
   const [nextQuestionTime, setNextQuestionTime] = useState<string>("")
 
-  // 타이머 계산 함수
+  // 타이머 계산 함수 수정
   useEffect(() => {
     const calculateTimeRemaining = () => {
       const now = new Date()
+      const currentQuestion = questions[activeTab]
 
-      // 오늘 오전 9시
-      const today9AM = new Date(now)
-      today9AM.setHours(9, 0, 0, 0)
+      if (!currentQuestion) return ""
 
-      // 내일 오전 9시
-      const tomorrow9AM = new Date(now)
-      tomorrow9AM.setDate(tomorrow9AM.getDate() + 1)
-      tomorrow9AM.setHours(9, 0, 0, 0)
+      // 현재 질문의 Day 번호 가져오기
+      const questionDay = currentQuestion.days || 1
 
-      // 현재 시간이 오늘 오전 9시 이전이면 오늘 오전 9시까지, 아니면 내일 오전 9시까지
-      const targetTime = now < today9AM ? today9AM : tomorrow9AM
-
-      const diffMs = targetTime.getTime() - now.getTime()
-      const hours = Math.floor(diffMs / (1000 * 60 * 60))
-      const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
-      const seconds = Math.floor((diffMs % (1000 * 60)) / 1000)
-
-      setTimeRemaining(
-        `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`,
-      )
+      // 새로운 유틸리티 함수 사용
+      return getTimeRemainingForSubmission(questionDay)
     }
 
     calculateTimeRemaining()
-    const timer = setInterval(calculateTimeRemaining, 1000)
+    const timer = setInterval(() => {
+      const remaining = calculateTimeRemaining()
+      setTimeRemaining(remaining)
+    }, 1000)
 
     return () => clearInterval(timer)
-  }, [])
+  }, [activeTab, questions])
 
   // 로컬 스토리지에서 확인 상태 로드 - 수정된 부분
   useEffect(() => {
@@ -399,7 +391,12 @@ export default function Home() {
       )}
 
       {/* 모범 답안 - 항상 표시 */}
-      {questions[activeTab] && <ModelAnswer modelAnswer={questions[activeTab].modelAnswer || ""} />}
+      {questions[activeTab] && (
+        <ModelAnswer
+          modelAnswer={questions[activeTab].modelAnswer || ""}
+          questionDay={questions[activeTab].days || 1}
+        />
+      )}
     </PageLayout>
   )
 }

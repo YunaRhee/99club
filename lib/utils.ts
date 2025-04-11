@@ -98,3 +98,52 @@ export function getTimeRemainingForModelAnswer(): string {
   const hoursRemaining = releaseHour - now.getHours()
   return `모범 답변 공개까지 ${hoursRemaining}시간 남음`
 }
+
+// 새로 추가: 답변 제출 마감 시간 계산 함수
+export function getAnswerDeadline(questionDay: number): Date {
+  const now = new Date()
+  const isDay3 = questionDay === 3
+
+  // 현재 요일 확인 (0: 일요일, 1: 월요일, ..., 5: 금요일, 6: 토요일)
+  const currentDayOfWeek = now.getDay()
+  const isFriday = currentDayOfWeek === 5
+
+  // Day 3 질문이고 금요일이면 다음 주 월요일 오전 9시까지
+  if (isDay3 && isFriday) {
+    const nextMonday = new Date(now)
+    // 현재 요일이 금요일(5)이면 +3일 하면 월요일
+    nextMonday.setDate(now.getDate() + 3)
+    nextMonday.setHours(9, 0, 0, 0)
+    return nextMonday
+  }
+
+  // 그 외의 경우 다음 날 오전 9시까지
+  const tomorrow = new Date(now)
+  tomorrow.setDate(now.getDate() + 1)
+  tomorrow.setHours(9, 0, 0, 0)
+  return tomorrow
+}
+
+// 새로 추가: 답변 제출 마감까지 남은 시간 계산 함수
+export function getTimeRemainingForSubmission(questionDay: number): string {
+  const now = new Date()
+  const deadline = getAnswerDeadline(questionDay)
+
+  // 이미 마감된 경우
+  if (now >= deadline) {
+    return "제출 마감"
+  }
+
+  // 남은 시간 계산
+  const diffMs = deadline.getTime() - now.getTime()
+  const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+  const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
+
+  // 24시간 이상 남은 경우 일수로 표시
+  if (diffHours >= 24) {
+    const diffDays = Math.floor(diffHours / 24)
+    return `${diffDays}일 ${diffHours % 24}시간 남음`
+  }
+
+  return `${diffHours}시간 ${diffMinutes}분 남음`
+}
