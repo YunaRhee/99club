@@ -1,6 +1,3 @@
-"use client"
-
-import { useState, useEffect } from "react"
 import { getQuestionById } from "@/lib/questions"
 import QuestionCard from "@/components/question-card"
 import AnswerForm from "@/components/answer-form"
@@ -8,50 +5,24 @@ import { getAnswersByQuestionId } from "@/lib/answers"
 import AnswerList from "@/components/answer-list"
 import { notFound } from "next/navigation"
 import PageLayout from "@/components/page-layout"
-import type { Question } from "@/lib/questions"
-import type { Answer } from "@/lib/answers"
 
-// 클라이언트 컴포넌트로 변경하고 데이터 페칭 로직 수정
-export default function QuestionPage({ params }: { params: { id: string } }) {
-  const [question, setQuestion] = useState<Question | null>(null)
-  const [answers, setAnswers] = useState<Answer[]>([])
-  const [loading, setLoading] = useState(true)
+// 서버 컴포넌트로 변경하고 params를 Promise로 처리
+export default async function QuestionPage({
+  params,
+}: {
+  params: Promise<{ id: string }>
+}) {
+  // params를 await로 처리
+  const { id } = await params
 
-  useEffect(() => {
-    async function fetchData() {
-      try {
-        // 클라이언트 사이드에서 데이터 페칭
-        const fetchedQuestion = await getQuestionById(params.id)
-        if (!fetchedQuestion) {
-          notFound()
-        }
-        setQuestion(fetchedQuestion)
-
-        const publicAnswers = await getAnswersByQuestionId(params.id, true)
-        setAnswers(publicAnswers)
-      } catch (error) {
-        console.error("데이터 로딩 오류:", error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    fetchData()
-  }, [params.id])
-
-  if (loading) {
-    return (
-      <PageLayout>
-        <div className="flex justify-center items-center min-h-[300px]">
-          <div className="animate-pulse">로딩 중...</div>
-        </div>
-      </PageLayout>
-    )
-  }
+  const question = await getQuestionById(id)
 
   if (!question) {
-    return notFound()
+    notFound()
   }
+
+  // 공개된 답변 가져오기
+  const publicAnswers = await getAnswersByQuestionId(id, true)
 
   return (
     <PageLayout>
@@ -64,7 +35,7 @@ export default function QuestionPage({ params }: { params: { id: string } }) {
 
       <div className="mt-8">
         <h2 className="text-xl font-bold mb-4">공개된 답변</h2>
-        <AnswerList answers={answers} />
+        <AnswerList answers={publicAnswers} />
       </div>
     </PageLayout>
   )
