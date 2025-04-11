@@ -99,7 +99,7 @@ export function getTimeRemainingForModelAnswer(): string {
   return `모범 답변 공개까지 ${hoursRemaining}시간 남음`
 }
 
-// 새로 추가: 답변 제출 마감 시간 계산 함수
+// 답변 제출 마감 시간 계산 함수
 export function getAnswerDeadline(questionDay: number): Date {
   const now = new Date()
   const isDay3 = questionDay === 3
@@ -124,7 +124,7 @@ export function getAnswerDeadline(questionDay: number): Date {
   return tomorrow
 }
 
-// 새로 추가: 답변 제출 마감까지 남은 시간 계산 함수
+// 답변 제출 마감까지 남은 시간 계산 함수
 export function getTimeRemainingForSubmission(questionDay: number): string {
   const now = new Date()
   const deadline = getAnswerDeadline(questionDay)
