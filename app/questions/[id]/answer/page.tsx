@@ -1,15 +1,46 @@
+"use client"
+
+import { useState, useEffect } from "react"
 import { getQuestionById } from "@/lib/questions"
 import AnswerForm from "@/components/answer-form"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import { notFound } from "next/navigation"
+import type { Question } from "@/lib/questions"
 
-export default async function AnswerPage({ params }: { params: { id: string } }) {
-  const question = await getQuestionById(params.id)
+export default function AnswerPage({ params }: { params: { id: string } }) {
+  const [question, setQuestion] = useState<Question | null>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    async function fetchQuestion() {
+      try {
+        const fetchedQuestion = await getQuestionById(params.id)
+        if (!fetchedQuestion) {
+          notFound()
+        }
+        setQuestion(fetchedQuestion)
+      } catch (error) {
+        console.error("질문 로딩 오류:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchQuestion()
+  }, [params.id])
+
+  if (loading) {
+    return (
+      <div className="container max-w-4xl py-6 px-4 md:py-10">
+        <div className="animate-pulse">로딩 중...</div>
+      </div>
+    )
+  }
 
   if (!question) {
-    notFound()
+    return notFound()
   }
 
   return (
