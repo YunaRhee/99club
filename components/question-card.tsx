@@ -1,7 +1,9 @@
 "use client"
 
+import { CardFooter } from "@/components/ui/card"
+
 import { useState, useEffect } from "react"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import type { Question } from "@/lib/questions"
@@ -23,13 +25,18 @@ export default function QuestionCard({ question, category, onConfirmRead }: Ques
   // Load the button state from local storage on component mount
   useEffect(() => {
     if (typeof window !== "undefined") {
-      const storedState = localStorage.getItem(`question_read_${question.id}_${category}`)
+      const storageKey = `question_read_${question.id}_${category}`
+      const storedState = localStorage.getItem(storageKey)
       if (storedState === "true") {
         setIsConfirmed(true)
+        // 이미 확인된 질문이면 부모 컴포넌트에도 알림
+        if (onConfirmRead) {
+          onConfirmRead(category)
+        }
       }
       setIsLoaded(true)
     }
-  }, [question.id, category])
+  }, [question.id, category, onConfirmRead])
 
   // 카테고리별 배지 색상 설정
   const getBadgeClass = () => {
@@ -61,7 +68,8 @@ export default function QuestionCard({ question, category, onConfirmRead }: Ques
 
       // Save to localStorage
       if (typeof window !== "undefined") {
-        localStorage.setItem(`question_read_${question.id}_${category}`, "true")
+        const storageKey = `question_read_${question.id}_${category}`
+        localStorage.setItem(storageKey, "true")
       }
 
       // Notify parent component

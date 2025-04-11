@@ -215,31 +215,61 @@ export default function Home() {
     return () => clearInterval(timer)
   }, [])
 
-  // 로컬 스토리지에서 확인 상태 로드
+  // 로컬 스토리지에서 확인 상태 로드 - 수정된 부분
   useEffect(() => {
     if (typeof window !== "undefined") {
       const newConfirmedState = { ...confirmedCategories }
+      let hasChanges = false
 
-      if (localStorage.getItem(`question_read_${hardcodedQuestions.frontend.id}_Frontend`) === "true") {
-        newConfirmedState.frontend = true
-      }
-      if (localStorage.getItem(`question_read_${hardcodedQuestions.backend.id}_Backend`) === "true") {
-        newConfirmedState.backend = true
-      }
-      if (localStorage.getItem(`question_read_${hardcodedQuestions.common.id}_공통`) === "true") {
-        newConfirmedState.common = true
-      }
-      if (localStorage.getItem(`question_read_${hardcodedQuestions.personality.id}_인성`) === "true") {
-        newConfirmedState.personality = true
-      }
+      // 각 카테고리별 질문 확인 상태 로드
+      Object.keys(hardcodedQuestions).forEach((key) => {
+        if (typeof hardcodedQuestions[key] === "object" && hardcodedQuestions[key] !== null) {
+          const question = hardcodedQuestions[key]
+          const category = question.category || getCategoryFromKey(key)
+          const storageKey = `question_read_${question.id}_${category}`
 
-      setConfirmedCategories(newConfirmedState)
+          if (localStorage.getItem(storageKey) === "true") {
+            newConfirmedState[key] = true
+            hasChanges = true
+          }
+        }
+      })
+
+      // 상태가 변경되었을 때만 업데이트
+      if (hasChanges) {
+        setConfirmedCategories(newConfirmedState)
+      }
     }
   }, [])
+
+  // 카테고리 키에서 카테고리 이름 가져오기
+  const getCategoryFromKey = (key: string): string => {
+    switch (key) {
+      case "frontend":
+        return "Frontend"
+      case "backend":
+        return "Backend"
+      case "common":
+        return "공통"
+      case "personality":
+        return "인성"
+      default:
+        return key
+    }
+  }
 
   // 질문 확인 핸들러
   const handleQuestionConfirmed = (category: string) => {
     const categoryKey = getCategoryKey(category)
+
+    // 로컬 스토리지에 저장
+    if (typeof window !== "undefined") {
+      const question = questions[categoryKey]
+      if (question) {
+        localStorage.setItem(`question_read_${question.id}_${category}`, "true")
+      }
+    }
+
     setConfirmedCategories((prev) => ({
       ...prev,
       [categoryKey]: true,
