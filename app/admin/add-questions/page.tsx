@@ -61,7 +61,10 @@ export default function AddQuestionsPage() {
           }
         })
       } catch (parseError) {
-        throw new Error(`데이터 파싱 오류: ${parseError.message}`)
+        // 타입 안전하게 오류 메시지 처리
+        const errorMessage = parseError instanceof Error ? parseError.message : String(parseError)
+
+        throw new Error(`데이터 파싱 오류: ${errorMessage}`)
       }
 
       // API 호출
@@ -91,7 +94,7 @@ export default function AddQuestionsPage() {
       console.error("질문 저장 오류:", error)
       toast({
         title: "오류 발생",
-        description: error.message || "질문 저장 중 오류가 발생했습니다.",
+        description: error instanceof Error ? error.message : "질문 저장 중 오류가 발생했습니다.",
         variant: "destructive",
       })
     } finally {
