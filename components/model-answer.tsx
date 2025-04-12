@@ -18,6 +18,14 @@ export default function ModelAnswer({ modelAnswer, questionDay = 1 }: ModelAnswe
     const checkTime = () => {
       const now = new Date()
       const releaseHour = 20 // 저녁 8시
+      const isDay3 = questionDay === 3
+
+      // Day3 질문은 이미 어제 저녁 8시에 공개되었으므로 항상 볼 수 있게 설정
+      if (isDay3) {
+        setCanView(true)
+        setTimeRemaining("")
+        return
+      }
 
       // 오늘 오전 9시
       const today9AM = new Date(now)

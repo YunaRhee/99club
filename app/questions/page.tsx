@@ -349,10 +349,11 @@ export default function QuestionsPage() {
     // Day3 문제인지 확인하고 모범 답변 볼 수 있는지 체크
     const isDay3Question = question.days === 3
     if (isDay3Question) {
-      setCanViewAnswer(canViewModelAnswer())
-    } else {
-      // Day1, Day2 문제는 항상 볼 수 있음
+      // Day3 질문은 이미 어제 저녁 8시에 공개되었으므로 항상 볼 수 있음
       setCanViewAnswer(true)
+    } else {
+      // Day1, Day2 문제는 저녁 8시 이후에만 볼 수 있음
+      setCanViewAnswer(canViewModelAnswer())
     }
 
     // Mark question as read only if it hasn't been marked as read before

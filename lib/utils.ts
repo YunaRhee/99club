@@ -124,7 +124,7 @@ export function getAnswerDeadline(questionDay: number): Date {
   return tomorrow
 }
 
-// 답변 제출 마감까지 남은 시간 계산 함수
+// 답변 제출 마감까지 남은 시간 계산 함수 - 일수 표시 수정
 export function getTimeRemainingForSubmission(questionDay: number): string {
   const now = new Date()
   const deadline = getAnswerDeadline(questionDay)
@@ -139,10 +139,11 @@ export function getTimeRemainingForSubmission(questionDay: number): string {
   const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
   const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
 
-  // 24시간 이상 남은 경우 일수로 표시
+  // 24시간 이상 남은 경우 일수로 표시 - 항상 일수 표시
   if (diffHours >= 24) {
     const diffDays = Math.floor(diffHours / 24)
-    return `${diffDays}일 ${diffHours % 24}시간 남음`
+    const remainingHours = diffHours % 24
+    return `${diffDays}일 ${remainingHours}시간 ${diffMinutes}분 남음`
   }
 
   return `${diffHours}시간 ${diffMinutes}분 남음`
