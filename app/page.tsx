@@ -200,8 +200,7 @@ export default function Home() {
   }>(() => {
     // 현재 시간 확인
     const now = new Date()
-    const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0)
-    const day4ReleaseTime = new Date(2025, 3, 14, 9, 0, 0) // 2025년 4월 14일 오전 9시
+    const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 2025년 4월 11일 오전 9시
 
     // Day 3 공개 시간이 되었는지 확인
     if (now >= day3ReleaseTime) {
