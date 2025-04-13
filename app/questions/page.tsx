@@ -1,5 +1,15 @@
 "use client"
 import type { Question } from "@/lib/questions"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { ChevronDown, ChevronRight, ChevronUp, Clock } from "lucide-react"
+import { useState, useEffect } from "react"
+import { PageLayout } from "@/components/page-layout"
+import { useAuth } from "@/hooks/use-auth"
+import type { Answer } from "@/lib/answers"
+import { markQuestionAsRead, canViewModelAnswer } from "@/lib/utils"
 
 export default function QuestionsPage() {
   // 하드코딩된 Day 1과 Day 2 질문들 - ID 형식 수정
@@ -322,7 +332,7 @@ export default function QuestionsPage() {
       const year = date.getFullYear().toString().slice(2)
       const month = (date.getMonth() + 1).toString().padStart(2, "0")
       const day = date.getDate().toString().padStart(2, "0")
-      return ${year}/${month}/${day}
+      return `${year}/${month}/${day}`
     } catch (error) {
       console.error("날짜 포맷팅 오류:", error)
       return "04/10" // 오류 시 기본값
@@ -359,7 +369,7 @@ export default function QuestionsPage() {
   const fetchPublicAnswers = async (questionId: string) => {
     setIsLoadingAnswers(true)
     try {
-      const response = await fetch(/api/answers?questionId=${questionId}&publicOnly=true)
+      const response = await fetch(`/api/answers?questionId=${questionId}&publicOnly=true`)
       if (response.ok) {
         const data = await response.json()
         if (data.success && data.data) {
@@ -420,7 +430,7 @@ export default function QuestionsPage() {
     const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
     const seconds = Math.floor((diffMs % (1000 * 60)) / 1000)
 
-    const formattedTime = ${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}
+    const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
     setTimeRemaining(formattedTime)
     return formattedTime
   }
@@ -596,7 +606,7 @@ export default function QuestionsPage() {
                       {selectedQuestion.days === 2 && !canViewAnswer ? (
                         <div className="flex items-center text-sm text-hanghae-text/70">
                           <Clock className="h-4 w-4 mr-1" />
-                          <span>{timeRemaining ? ${timeRemaining} 후 공개 : "저녁 8시에 공개됩니다"}</span>
+                          <span>{timeRemaining ? `${timeRemaining} 후 공개` : "저녁 8시에 공개됩니다"}</span>
                         </div>
                       ) : showModelAnswer ? (
                         <ChevronUp className="h-5 w-5" />
