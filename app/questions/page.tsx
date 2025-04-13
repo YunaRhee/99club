@@ -348,9 +348,14 @@ export default function QuestionsPage() {
     // 현재 시간 확인
     const now = new Date()
     const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 2025년 4월 11일 오전 9시
+    const day4ReleaseTime = new Date(2025, 3, 14, 9, 0, 0) // 2025년 4월 14일 오전 9시
 
     // 시간 기반 필터링된 질문 목록
     const timeFilteredQuestions = [...hardcodedQuestions].filter((q) => {
+      // Day 4 질문은 4월 14일 오전 9시 이후에만 표시
+      if (q.days === 4) {
+        return now >= day4ReleaseTime
+      }
       // Day 3 질문은 오전 9시 이후에만 표시
       if (q.days === 3) {
         return now >= day3ReleaseTime
@@ -466,9 +471,14 @@ export default function QuestionsPage() {
     // 현재 시간 확인
     const now = new Date()
     const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 2025년 4월 11일 오전 9시
+    const day4ReleaseTime = new Date(2025, 3, 14, 9, 0, 0) // 2025년 4월 14일 오전 9시
 
     // 시간 기반 필터링
     const timeFilteredQuestions = [...hardcodedQuestions].filter((q) => {
+      // Day 4 질문은 4월 14일 오전 9시 이후에만 표시
+      if (q.days === 4) {
+        return now >= day4ReleaseTime
+      }
       // Day 3 질문은 오전 9시 이후에만 표시
       if (q.days === 3) {
         return now >= day3ReleaseTime
