@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { ChevronDown, ChevronRight, ChevronUp, Clock } from "lucide-react"
 import { useState, useEffect } from "react"
 import { PageLayout } from "@/components/page-layout"
-import { useAuth } from "@/hooks/use-auth"
+import { useAuth } from "@/lib/auth-context"
 import type { Answer } from "@/lib/answers"
 import { markQuestionAsRead, canViewModelAnswer } from "@/lib/utils"
 
