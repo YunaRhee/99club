@@ -222,6 +222,55 @@ export default function QuestionsPage() {
         "<b>[첫 취업 준비생이라면?]</b><br>\n팀 프로젝트에서 사용자 인증, 장바구니, UI 상태 등 다양한 상태를 관리해야 했습니다. 처음에는 Context API만으로 구현했지만, 컴포넌트가 늘어나면서 불필요한 리렌더링과 코드 복잡성 문제가 발생했습니다. 이를 해결하기 위해 상태를 UI 상태와 서버 데이터로 구분하고, UI 상태는 Recoil로, 서버 데이터는 React Query로 관리하는 방식을 도입했습니다. 그 결과 코드 가독성이 높아지고, 캐싱과 비동기 상태 관리가 용이해졌습니다.<br><br>\n<b>[현직 개발자로, 이직 면접이라면?]</b><br>\n대규모 어드민 대시보드 프로젝트에서 상태 관리 전략을 설계했습니다. 애플리케이션의 복잡성을 고려해 상태를 세 가지로 분류했습니다: 1) 전역 앱 상태(Redux), 2) 서버 데이터(React Query), 3) 지역 UI 상태(useState/useReducer). Redux는 미들웨어 생태계와 DevTools의 이점 때문에 선택했으며, 특히 복잡한 필터링과 정렬 상태를 관리하는 데 효과적이었습니다. 또한 Redux 모듈을 도메인별로 분리하고 Redux Toolkit을 도입해 보일러플레이트 코드를 줄였습니다. 이러한 접근 방식으로 개발자 간 일관된 상태 관리가 가능해졌고, 새로운 기능 추가 시 개발 속도도 30% 향상되었습니다.",
       days: 3,
     },
+    // Day 4 질문들
+    q13: {
+      id: "q13",
+      title: "컨테이너화와 오케스트레이션",
+      content:
+        "컨테이너화 및 오케스트레이션 도구를 통해 개발/배포 환경을 효율화한 사례가 있다면, 그 방식과 효과를 구체적으로 설명해 주세요.",
+      date: "2025-04-14",
+      category: "공통",
+      hint: "단순히 Docker를 사용해봤다는 수준을 넘어서, 실제 어떤 문제를 해결하기 위해 도입했는지를 중심으로 풀어주는 게 좋습니다.GitOps 방식, Canary 배포, 자동 스케일링 등의 키워드를 함께 언급하시면 실전 경험이 잘 드러납니다.",
+      modelAnswer:
+        "<b>[첫 취업 준비생이라면?]</b><br>학부 프로젝트에서 도커를 활용해 개발 환경을 통일한 경험이 있습니다.<br> 개발자마다 로컬 환경이 달라 빌드 오류가 잦았는데, Dockerfile을 설정해 공통 환경을 구성했고, 팀원 전원이 동일한 환경에서 개발할 수 있도록 만들었습니다.<br> 이후 GitHub Actions를 통해 이미지 빌드 및 테스트 자동화를 구성하면서, 실무에 가까운 CI/CD 흐름을 경험할 수 있었습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> EKS 기반 마이크로서비스에서 배포 자동화를 위해 ArgoCD를 도입했습니다.<br> 각 서비스는 Helm chart로 구성해 공통 배포 규칙을 관리했고, GitOps 방식으로 운영하면서 배포 오류율이 70% 이상 감소했습니다.<br> 또한 HPA를 연동해 트래픽 급증 시 자동 스케일링이 가능해졌고, Canary 배포 전략으로 무중단 배포까지 구현했습니다.",
+      days: 4,
+    },
+    q14: {
+      id: "q14",
+      title: "클라이언트 보안",
+      content:
+        "웹 클라이언트에서 발생할 수 있는 보안 취약점을 방지하기 위해 어떤 전략을 설계하고 구현했는지 실제 사례를 들어 설명해 주세요.",
+      date: "2025-04-14",
+      category: "Frontend",
+      hint: "XSS나 CSRF 같은 용어만 나열하기보다는, 실제 어떤 입력값이 문제였고 그에 어떤 도구나 정책으로 대응했는지를 설명해주시면 좋습니다. 보안은 예방보다 복구가 어렵기 때문에, 초기 설계 관점에서 접근한 경험이 있다면 특히 강점이 될 수 있습니다.",
+      modelAnswer:
+        "<b>[첫 취업 준비생이라면?]</b><br> React로 구현한 블로그 프로젝트에서 XSS 공격 가능성을 테스트하다 alert() 삽입이 가능하다는 걸 발견했습니다.<br> 이후 DOMPurify를 도입해 사용자 입력값을 sanitize 처리했고, 사용자 입력 시 위험한 태그를 제거하도록 수정했습니다.<br> 보안은 단순 기능 외에도 기본 방어선이 있어야 한다는 걸 처음 체감한 경험입니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 사내 관리자 페이지에서 iframe embedding, XSS 시도 등의 이슈가 발견된 이후, CSP 정책 설정과 input 필드에 sanitize 처리를 적용했습니다.<br> 또한 쿠키에 SameSite 설정을 적용해 CSRF 대응을 강화했고, Sentry를 통해 사용자 단의 예외 이벤트도 함께 추적했습니다.<br> 보안은 기능 구현 이후가 아니라, 기획 단계부터 염두에 두어야 함을 깨달은 계기였습니다.",
+      days: 4,
+    },
+    q15: {
+      id: "q15",
+      title: "데이터베이스 최적화 기법",
+      content:
+        "DB 인덱스, 샤딩, 복제 등의 기법을 활용해 성능을 개선한 경험이 있다면, 문제 상황과 적용 방식, 결과를 함께 설명해 주세요.",
+      date: "2025-04-14",
+      category: "Backend",
+      hint: "쿼리 성능 문제를 어떤 방식으로 진단했고, 그에 따라 어떤 인덱스를 어떻게 설계했는지가 중요합니다. 단순히 “인덱스를 추가했다”보다는, 실행 계획(EXPLAIN) 분석이나 파티셔닝·샤딩을 통한 구조적 접근이 담기면 훨씬 설득력 있는 답변이 됩니다.",
+      modelAnswer:
+        "<b>[첫 취업 준비생이라면?]</b><br> 사이드 프로젝트에서 특정 게시글 리스트 API가 매우 느려지는 현상이 있었고, 쿼리를 분석해보니 날짜 필드 정렬 시 인덱스가 적용되지 않는 문제가 있었습니다.<br> 이를 해결하기 위해 복합 인덱스를 생성했고, DB 조회 속도가 3초 → 0.3초로 개선되었습니다.<br> 처음엔 단순히 LIMIT 문제로 생각했지만, 실제 실행 계획(EXPLAIN) 확인의 중요성을 알게 되었습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 거래 데이터가 수억 건 누적된 테이블에서 정산 리포트 API의 성능 문제가 발생했습니다.<br> 비정규화 테이블을 분리하고 파티셔닝 전략과 인덱스 튜닝, 읽기 전용 슬레이브를 통한 부하 분산을 적용해 평균 응답 속도를 5초 → 0.7초로 줄였습니다.<br> 이외에도 slow query 로그 기반으로 인덱스 통계를 정리해 매월 리팩토링 주기를 운영했습니다.",
+      days: 4,
+    },
+    q16: {
+      id: "q16",
+      title: "리더십 발휘 순간",
+      content:
+        "프로젝트나 팀 활동 중 리더십을 발휘했던 경험이 있다면, 어떤 방식으로 팀을 이끌었고 어떤 결과를 냈는지 설명해 주세요.",
+      date: "2025-04-14",
+      category: "인성",
+      hint: "팀원 간 의견 차이나 일정 위기 등 구체적인 상황에서 어떻게 조율하고 리드했는지가 중요합니다. 주도적으로 흐름을 바꿨던 순간이나, 팀 분위기·성과에 긍정적인 영향을 미친 행동이 잘 드러나야 실무형 리더십으로 인정받을 수 있습니다.",
+      modelAnswer:
+        "<b>[첫 취업 준비생이라면?]</b><br> 팀 프로젝트에서 일정이 자꾸 밀려 팀 분위기가 가라앉은 상황이 있었습니다.<br> 제가 먼저 팀원들과 일정을 다시 정리하고 우선순위를 조정해 '작동하는 기능부터 완성하자'는 MVP 전략을 제안했습니다.<br> 이후 팀원 간 협업이 원활해졌고 프로젝트도 제시간에 마무리할 수 있었습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 신규 기능 런칭 프로젝트에서 PO가 중간 이탈해 일정이 크게 흔들린 적이 있습니다.<br> PM 부재 상태에서 주도적으로 요구사항 정리, 스프린트 재계획, QA 체크리스트 작성 등을 리드했고, 릴리즈를 무사히 완료했습니다.<br> 이후 회고에서 해당 경험이 계기가 되어 팀 내 기술 PM 역할을 제안받기도 했습니다.",
+      days: 4,
+    },
   ]
 
   const [questions, setQuestions] = useState<Question[]>(hardcodedQuestions)
@@ -244,16 +293,16 @@ export default function QuestionsPage() {
   // 현재 날짜 기준으로 Day 계산 - 시간에 따라 Day 3 표시
   const calculateDayCount = () => {
     const now = new Date()
-
-    // 2025년 4월 11일 오전 9시 (Day 3 공개 시간)
-    const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 월은 0부터 시작하므로 4월은 3
+    const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0)
+    const day4ReleaseTime = new Date(2025, 3, 14, 9, 0, 0)
 
     // 현재 시간이 2025년 4월 11일 오전 9시 이후인지 확인
-    if (now >= day3ReleaseTime) {
-      return 3 // Day 3 표시
+    if (now >= day4ReleaseTime) {
+      return 4
+    } else if (now >= day3ReleaseTime) {
+      return 3
     }
-
-    return 2 // 그 전에는 Day 2 표시
+    return 2
   }
 
   // 현재 날짜 기준 Day 계산
@@ -299,15 +348,16 @@ export default function QuestionsPage() {
 
     // 현재 시간 확인
     const now = new Date()
-    const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 2025년 4월 11일 오전 9시
+    const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0)
+    const day4ReleaseTime = new Date(2025, 3, 14, 9, 0, 0)
 
-    // 시간 기반 필터링된 질문 목록
     const timeFilteredQuestions = [...hardcodedQuestions].filter((q) => {
-      // Day 3 질문은 오전 9시 이후에만 표시
       if (q.days === 3) {
         return now >= day3ReleaseTime
+      } else if (q.days === 4) {
+        return now >= day4ReleaseTime
       }
-      return true // Day 1, 2 질문은 항상 표시
+      return true // Day1, Day2 질문은 항상 표시
     })
 
     // 카테고리 필터링 적용
@@ -342,26 +392,31 @@ export default function QuestionsPage() {
   }
 
   // 모범 답변 볼 수 있는지 확인하는 로직 수정
-  const handleQuestionClick = async (question: Question) => {
-    setSelectedQuestion(question)
-    setShowModelAnswer(false) // 모달 열릴 때 모범 답변 숨기기
+const handleQuestionClick = async (question: Question) => {
+  setSelectedQuestion(question)
+  setShowModelAnswer(false) // 모달 열릴 때 모범 답변 숨기기
 
-    // Day3 문제인지 확인하고 모범 답변 볼 수 있는지 체크
-    const isDay3Question = question.days === 3
-    if (isDay3Question) {
-      // Day3 질문은 이미 어제 저녁 8시에 공개되었으므로 항상 볼 수 있음
-      setCanViewAnswer(true)
-    } else {
-      // Day1, Day2 문제는 저녁 8시 이후에만 볼 수 있음
-      setCanViewAnswer(canViewModelAnswer())
-    }
+  const now = new Date()
+  // Day3 문제는 이미 공개되어 항상 보여짐
+  const isDay3OrBelow = question.days < 4
+  // Day4 문제는 2025년 4월 14일 오전 9시 이후에만 공개됨
+  const day4ReleaseTime = new Date(2025, 3, 14, 9, 0, 0) // 월은 0부터 시작하므로 4월은 3
 
-    // Mark question as read only if it hasn't been marked as read before
-    if (userId && !hasMarkedRead) {
-      markQuestionAsRead(userId, question.id)
-      setHasMarkedRead(true) // Set the state to true after marking as read
-    }
+  if (isDay3OrBelow) {
+    setCanViewAnswer(true)
+  } else if (question.days === 4) {
+    setCanViewAnswer(now >= day4ReleaseTime)
+  } else {
+    // 기본적으로 다른 경우에도 모범 답변 볼 수 있도록 처리 (필요시 조건 추가)
+    setCanViewAnswer(true)
   }
+
+  // 질문 읽음 처리: 유저가 존재하고 아직 읽음 처리가 안 된 경우
+  if (userId && !hasMarkedRead) {
+    markQuestionAsRead(userId, question.id)
+    setHasMarkedRead(true)
+  }
+}
 
   // 남은 시간 계산 함수
   const calculateTimeRemaining = () => {
@@ -396,7 +451,7 @@ export default function QuestionsPage() {
 
   // 시간 업데이트를 위한 타이머 설정 부분도 수정
   useEffect(() => {
-    if (selectedQuestion?.days === 3) {
+    if (selectedQuestion?.days === 4) {
       // Day3 문제인 경우에만 타이머 설정
       calculateTimeRemaining()
       const timer = setInterval(() => {
@@ -417,13 +472,14 @@ export default function QuestionsPage() {
   useEffect(() => {
     // 현재 시간 확인
     const now = new Date()
-    const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 2025년 4월 11일 오전 9시
+    const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0)
+    const day3ReleaseTime = new Date(2025, 3, 14, 9, 0, 0) // 2025년 4월 11일 오전 9시
 
     // 시간 기반 필터링
     const timeFilteredQuestions = [...hardcodedQuestions].filter((q) => {
-      // Day 3 질문은 오전 9시 이후에만 표시
-      if (q.days === 3) {
-        return now >= day3ReleaseTime
+      // Day 4 질문은 오전 9시 이후에만 표시
+      if (q.days === 4) {
+        return now >= day4ReleaseTime
       }
       return true // Day 1, 2 질문은 항상 표시
     })
