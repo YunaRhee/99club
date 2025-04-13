@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
 import { ChevronDown, ChevronRight, ChevronUp, Clock } from "lucide-react"
 import { useState, useEffect } from "react"
-import { PageLayout } from "@/components/page-layout"
+import PageLayout from "@/components/page-layout"
 import { useAuth } from "@/lib/auth-context"
 import type { Answer } from "@/lib/answers"
-import { markQuestionAsRead, canViewModelAnswer } from "@/lib/utils"
+import { canViewModelAnswer } from "@/lib/utils"
+import { markQuestionAsRead } from "@/lib/user-activity"
 
 export default function QuestionsPage() {
   // 하드코딩된 Day 1과 Day 2 질문들 - ID 형식 수정

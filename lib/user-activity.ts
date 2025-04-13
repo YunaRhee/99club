@@ -50,7 +50,7 @@ export function saveUserActivity(userId: string, activity: UserActivity): void {
 }
 
 // 질문 읽음 표시
-export function markQuestionAsRead(userId: string, questionId: string, category: string): void {
+export function markQuestionAsRead(userId: string, questionId: string, category = ""): void {
   if (!userId) return
 
   const activity = getUserActivity(userId)
@@ -62,7 +62,7 @@ export function markQuestionAsRead(userId: string, questionId: string, category:
   if (!alreadyRead) {
     activity.readQuestions.push({
       id: questionId,
-      category,
+      category: category || "Unknown",
       date: today,
     })
 
@@ -185,6 +185,7 @@ export async function saveUserToSpreadsheet(
   nickname: string,
   phone: string,
   password: string,
+  profileIcon?: string,
 ): Promise<boolean> {
   try {
     const response = await fetch("/api/users/register", {
@@ -197,7 +198,7 @@ export async function saveUserToSpreadsheet(
         nickname,
         phone,
         password,
-        profileIcon: getRandomProfileIcon(nickname),
+        profileIcon: profileIcon || getRandomProfileIcon(nickname),
         createdAt: new Date().toLocaleString("ko-KR", { timeZone: "Asia/Seoul" }),
       }),
     })
