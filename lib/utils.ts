@@ -99,8 +99,10 @@ export function getTimeRemainingForModelAnswer(): string {
   return `모범 답변 공개까지 ${hoursRemaining}시간 남음`
 }
 
-// 답변 제출 마감 시간 계산 함수
-export function getAnswerDeadline(questionDay: number): Date {
+// 답변 제출 마감 시간 계산 함수를 수정합니다
+// Day 3 질문은 금요일에만 다음 주 월요일로 설정하고, 다른 날짜에는 다음 날이 아닌 당일 기준으로 계산하도록 변경
+
+function getAnswerDeadline(questionDay: number): Date {
   const now = new Date()
   const isDay3 = questionDay === 3
 
@@ -115,6 +117,23 @@ export function getAnswerDeadline(questionDay: number): Date {
     nextMonday.setDate(now.getDate() + 3)
     nextMonday.setHours(9, 0, 0, 0)
     return nextMonday
+  }
+
+  // Day 3 질문이지만 금요일이 아닌 경우, 당일 기준으로 계산
+  // 현재 시간이 오전 9시 이전이면 당일 오전 9시, 이후면 다음 날 오전 9시
+  if (isDay3) {
+    const today = new Date(now)
+    if (now.getHours() < 9) {
+      // 오전 9시 이전이면 당일 오전 9시
+      today.setHours(9, 0, 0, 0)
+      return today
+    } else {
+      // 오전 9시 이후면 다음 날 오전 9시
+      const tomorrow = new Date(now)
+      tomorrow.setDate(now.getDate() + 1)
+      tomorrow.setHours(9, 0, 0, 0)
+      return tomorrow
+    }
   }
 
   // 그 외의 경우 다음 날 오전 9시까지
@@ -136,14 +155,13 @@ export function getTimeRemainingForSubmission(questionDay: number): string {
 
   // 남은 시간 계산
   const diffMs = deadline.getTime() - now.getTime()
-  const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+  const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+  const diffHours = Math.floor((diffMs % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))
   const diffMinutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
 
-  // 24시간 이상 남은 경우 일수로 표시 - 항상 일수 표시
-  if (diffHours >= 24) {
-    const diffDays = Math.floor(diffHours / 24)
-    const remainingHours = diffHours % 24
-    return `${diffDays}일 ${remainingHours}시간 ${diffMinutes}분 남음`
+  // 항상 일수 포함하여 표시
+  if (diffDays > 0) {
+    return `${diffDays}일 ${diffHours}시간 ${diffMinutes}분 남음`
   }
 
   return `${diffHours}시간 ${diffMinutes}분 남음`
