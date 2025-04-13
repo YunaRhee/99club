@@ -161,23 +161,23 @@ export default function Home() {
     },
   }
 
-// 현재 날짜 기준으로 Day 계산 - Day 4는 2025년 4월 14일 오전 9시 이후에 공개
-const calculateDayCount = () => {
-  const now = new Date()
+  // 현재 날짜 기준으로 Day 계산 - Day 4는 2025년 4월 14일 오전 9시 이후에 공개
+  const calculateDayCount = () => {
+    const now = new Date()
 
-  // 2025년 4월 11일 오전 9시 (Day 3 공개 시간)
-  const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 월은 0부터 시작하므로 4월은 3
-  // 2025년 4월 14일 오전 9시 (Day 4 공개 시간)
-  const day4ReleaseTime = new Date(2025, 3, 14, 9, 0, 0)
+    // 2025년 4월 11일 오전 9시 (Day 3 공개 시간)
+    const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 월은 0부터 시작하므로 4월은 3
+    // 2025년 4월 14일 오전 9시 (Day 4 공개 시간)
+    const day4ReleaseTime = new Date(2025, 3, 14, 9, 0, 0)
 
-  if (now >= day4ReleaseTime) {
-    return 4 // Day 4 공개됨
-  } else if (now >= day3ReleaseTime) {
-    return 3 // Day 3 공개됨
+    if (now >= day4ReleaseTime) {
+      return 4 // Day 4 공개됨
+    } else if (now >= day3ReleaseTime) {
+      return 3 // Day 3 공개됨
+    }
+
+    return 2 // 그 전에는 Day 2
   }
-
-  return 2 // 그 전에는 Day 2
-}
 
   // 현재 날짜 기준 Day 계산 - 항상 2 반환
   const dayCount = calculateDayCount()
@@ -200,7 +200,8 @@ const calculateDayCount = () => {
   }>(() => {
     // 현재 시간 확인
     const now = new Date()
-    const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 2025년 4월 11일 오전 9시
+    const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0)
+    const day4ReleaseTime = new Date(2025, 3, 14, 9, 0, 0) // 2025년 4월 14일 오전 9시
 
     // Day 3 공개 시간이 되었는지 확인
     if (now >= day3ReleaseTime) {
