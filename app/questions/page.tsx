@@ -282,23 +282,23 @@ export default function QuestionsPage() {
   }
 
   return (
-    <PageLayout title="지난 면접 질문">
-      {/* 카테고리 필터 드롭다운 추가 */}
-      <div className="mb-6">
+    <PageLayout
+      title="지난 면접 질문"
+      subtitle={
         <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-          <SelectTrigger className="w-[180px]">
+          <SelectTrigger className="w-[180px] bg-white text-black hover:cursor-pointer">
             <SelectValue placeholder="카테고리 선택" />
           </SelectTrigger>
-          <SelectContent>
+          <SelectContent className="bg-white text-black">
             <SelectItem value="all">전체</SelectItem>
-            <SelectItem value="공통">공통</SelectItem>
-            <SelectItem value="Backend">Backend</SelectItem>
-            <SelectItem value="Frontend">Frontend</SelectItem>
-            <SelectItem value="인성">인성</SelectItem>
+            <SelectItem value="공통">[공통]</SelectItem>
+            <SelectItem value="Backend">[Backend]</SelectItem>
+            <SelectItem value="Frontend">[Frontend]</SelectItem>
+            <SelectItem value="인성">[인성]</SelectItem>
           </SelectContent>
         </Select>
-      </div>
-
+      }
+    >
       <div className="space-y-4">
         {filteredQuestions.map((question) => (
           <Card
