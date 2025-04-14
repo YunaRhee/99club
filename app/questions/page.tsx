@@ -286,23 +286,23 @@ export default function QuestionsPage() {
       title="지난 면접 질문"
       subtitle={
         <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-          <SelectTrigger className="w-[180px] bg-white text-black hover:cursor-pointer">
+          <SelectTrigger className="w-[180px] bg-hanghae-gray text-hanghae-text border-hanghae-light hover:cursor-pointer">
             <SelectValue placeholder="카테고리 선택" />
           </SelectTrigger>
-          <SelectContent className="bg-white text-black">
-            <SelectItem value="all" className="hover:cursor-pointer hover:bg-gray-100/80">
+          <SelectContent className="bg-hanghae-gray text-hanghae-text border-hanghae-light">
+            <SelectItem value="all" className="hover:cursor-pointer hover:bg-hanghae-light/80">
               전체
             </SelectItem>
-            <SelectItem value="공통" className="hover:cursor-pointer hover:bg-gray-100/80">
+            <SelectItem value="공통" className="hover:cursor-pointer hover:bg-hanghae-light/80">
               공통
             </SelectItem>
-            <SelectItem value="Backend" className="hover:cursor-pointer hover:bg-gray-100/80">
+            <SelectItem value="Backend" className="hover:cursor-pointer hover:bg-hanghae-light/80">
               Backend
             </SelectItem>
-            <SelectItem value="Frontend" className="hover:cursor-pointer hover:bg-gray-100/80">
+            <SelectItem value="Frontend" className="hover:cursor-pointer hover:bg-hanghae-light/80">
               Frontend
             </SelectItem>
-            <SelectItem value="인성" className="hover:cursor-pointer hover:bg-gray-100/80">
+            <SelectItem value="인성" className="hover:cursor-pointer hover:bg-hanghae-light/80">
               인성
             </SelectItem>
           </SelectContent>
