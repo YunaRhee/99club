@@ -6,7 +6,17 @@ interface QuestionSheetData {
   exists: boolean
   rowCount: number
   data: any[]
-  error?: string // error 속성 추가
+  error?: string
+}
+
+// AuthTest 인터페이스 정의 추가
+interface AuthTest {
+  success: boolean
+  message: string
+  spreadsheetTitle?: string
+  sheetsCount?: number
+  sheetsList?: string[]
+  questionSheetData?: QuestionSheetData
 }
 
 export async function GET() {
@@ -31,7 +41,7 @@ export async function GET() {
     }
 
     // 인증 테스트
-    let authTest = { success: false, message: "테스트 실행되지 않음" }
+    let authTest: AuthTest = { success: false, message: "테스트 실행되지 않음" }
     try {
       const { JWT } = google.auth
       const auth = new JWT({
@@ -70,25 +80,38 @@ export async function GET() {
         questionSheetData = { exists: false, rowCount: 0, data: [], error: error.message }
       }
 
+      // 성공 시 authTest 객체에 추가 정보 포함
+      const fullAuthTest: AuthTest = {
+        ...authTest,
+        spreadsheetTitle: testResponse.data.properties?.title || "제목 없음",
+        sheetsCount: testResponse.data.sheets?.length || 0,
+        sheetsList: sheetsList,
+        questionSheetData,
+      }
+
       return NextResponse.json({
         success: true,
         message: "구글 시트 연결 테스트",
         authInfo,
-        authTest: {
-          ...authTest,
-          spreadsheetTitle: testResponse.data.properties?.title || "제목 없음",
-          sheetsCount: testResponse.data.sheets?.length || 0,
-          sheetsList: sheetsList,
-          questionSheetData,
-        },
+        authTest: fullAuthTest,
       })
     } catch (error) {
+      // 오류 발생 시 authTest 객체에 필요한 모든 속성 포함
+      authTest = {
+        success: false,
+        message: error.message,
+        spreadsheetTitle: undefined,
+        sheetsCount: undefined,
+        sheetsList: undefined,
+        questionSheetData: undefined,
+      }
+
       return NextResponse.json(
         {
           success: false,
           message: "구글 시트 연결 오류",
           authInfo,
-          authTest: { success: false, message: error.message, stack: error.stack },
+          authTest,
         },
         { status: 500 },
       )

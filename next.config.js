@@ -45,11 +45,6 @@ const nextConfig = {
     }
     return config
   },
-}
-
-module.exports = {
-  // 기존 설정 유지
-
   // SSL 관련 설정 추가
   async headers() {
     return [
@@ -77,3 +72,5 @@ module.exports = {
     ]
   },
 }
+
+module.exports = nextConfig
