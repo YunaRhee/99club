@@ -494,17 +494,18 @@ export default function Home() {
         </TabsContent>
       </Tabs>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="col-span-1">
+      {/* Replace the grid layout with vertical stacking */}
+      <div className="space-y-6">
+        <div>
           <AnswerForm questionId={getCurrentQuestionId()} category={getCurrentCategory()} />
         </div>
 
-        <div className="col-span-1">
+        <div>
           <div className="flex items-center space-x-2 mb-2">
             <Clock className="h-4 w-4 text-gray-500" />
             <p className="text-sm text-gray-500">다음 질문까지 남은 시간: {timeRemaining}</p>
           </div>
-          <ModelAnswer question={questions[activeTab]} />
+          <ModelAnswer modelAnswer={questions[activeTab]?.modelAnswer} questionDay={questions[activeTab]?.days} />
         </div>
       </div>
     </PageLayout>

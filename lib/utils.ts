@@ -106,8 +106,13 @@ export function formatDateTime(dateString: string): string {
   }
 }
 
-// 모범 답변을 볼 수 있는지 확인 (오후 8시 이후)
-export function canViewModelAnswer(): boolean {
+// 모범 답변을 볼 수 있는지 확인 (오후 8시 이후 또는 Day 4 질문)
+export function canViewModelAnswer(questionDay?: number): boolean {
+  // Day 4 질문은 항상 볼 수 있음
+  if (questionDay === 4) {
+    return true
+  }
+
   const now = new Date()
   return now.getHours() >= 20 // 저녁 8시 이후
 }
