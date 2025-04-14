@@ -290,11 +290,21 @@ export default function QuestionsPage() {
             <SelectValue placeholder="카테고리 선택" />
           </SelectTrigger>
           <SelectContent className="bg-white text-black">
-            <SelectItem value="all">전체</SelectItem>
-            <SelectItem value="공통">[공통]</SelectItem>
-            <SelectItem value="Backend">[Backend]</SelectItem>
-            <SelectItem value="Frontend">[Frontend]</SelectItem>
-            <SelectItem value="인성">[인성]</SelectItem>
+            <SelectItem value="all" className="hover:cursor-pointer hover:bg-gray-100/80">
+              전체
+            </SelectItem>
+            <SelectItem value="공통" className="hover:cursor-pointer hover:bg-gray-100/80">
+              공통
+            </SelectItem>
+            <SelectItem value="Backend" className="hover:cursor-pointer hover:bg-gray-100/80">
+              Backend
+            </SelectItem>
+            <SelectItem value="Frontend" className="hover:cursor-pointer hover:bg-gray-100/80">
+              Frontend
+            </SelectItem>
+            <SelectItem value="인성" className="hover:cursor-pointer hover:bg-gray-100/80">
+              인성
+            </SelectItem>
           </SelectContent>
         </Select>
       }
