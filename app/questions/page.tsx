@@ -7,7 +7,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import PageLayout from "@/components/page-layout"
 import { formatDateShort } from "@/lib/utils"
 import type { Question } from "@/lib/questions"
-import AnswerForm from "@/components/answer-form"
 import { getAnswersByQuestionId } from "@/lib/answers"
 import AnswerList from "@/components/answer-list"
 
@@ -190,11 +189,6 @@ export default function QuestionsPage() {
                     <p className="text-sm text-hanghae-text/70 whitespace-pre-wrap">{selectedQuestion.hint}</p>
                   </div>
                 )}
-              </div>
-
-              <div className="mt-6">
-                <h2 className="text-lg font-bold mb-4">답변 작성하기</h2>
-                <AnswerForm questionId={selectedQuestion.id} category={selectedQuestion.category} />
               </div>
 
               <div className="mt-6">
