@@ -7,7 +7,7 @@ export function cn(...inputs: ClassValue[]) {
 
 // Replace the getDayCount and calculateDayNumber functions with time-based versions
 
-// Update the getDayCount function to include Day 4 logic
+// Update the getDayCount function to include Day 5 logic
 export function getDayCount(): number {
   const now = new Date()
 
@@ -15,9 +15,15 @@ export function getDayCount(): number {
   const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 월은 0부터 시작하므로 4월은 3
   // 2025년 4월 14일 오전 9시 (Day 4 공개 시간)
   const day4ReleaseTime = new Date(2025, 3, 14, 9, 0, 0)
+  // 2025년 4월 15일 오전 9시 (Day 5 공개 시간)
+  const day5ReleaseTime = new Date(2025, 3, 15, 9, 0, 0)
 
+  // 현재 시간이 2025년 4월 15일 오전 9시 이후인지 확인
+  if (now >= day5ReleaseTime) {
+    return 5 // Day 5 표시
+  }
   // 현재 시간이 2025년 4월 14일 오전 9시 이후인지 확인
-  if (now >= day4ReleaseTime) {
+  else if (now >= day4ReleaseTime) {
     return 4 // Day 4 표시
   }
   // 현재 시간이 2025년 4월 11일 오전 9시 이후인지 확인
@@ -28,7 +34,7 @@ export function getDayCount(): number {
   return 2 // 그 전에는 Day 2 표시
 }
 
-// Update the calculateDayNumber function to include Day 4 logic
+// Update the calculateDayNumber function to include Day 5 logic
 export function calculateDayNumber(dateString: string): number {
   const now = new Date()
   const date = new Date(dateString)
@@ -37,6 +43,13 @@ export function calculateDayNumber(dateString: string): number {
   const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0)
   // 2025년 4월 14일 오전 9시 (Day 4 공개 시간)
   const day4ReleaseTime = new Date(2025, 3, 14, 9, 0, 0)
+  // 2025년 4월 15일 오전 9시 (Day 5 공개 시간)
+  const day5ReleaseTime = new Date(2025, 3, 15, 9, 0, 0)
+
+  // 현재 시간이 2025년 4월 15일 오전 9시 이후이고, 날짜가 4월 15일이면 Day 5
+  if (now >= day5ReleaseTime && date.getDate() === 15 && date.getMonth() === 3 && date.getFullYear() === 2025) {
+    return 5
+  }
 
   // 현재 시간이 2025년 4월 14일 오전 9시 이후이고, 날짜가 4월 14일이면 Day 4
   if (now >= day4ReleaseTime && date.getDate() === 14 && date.getMonth() === 3 && date.getFullYear() === 2025) {
@@ -115,16 +128,26 @@ export function getTimeRemainingForModelAnswer(): string {
 // 답변 제출 마감 시간 계산 함수를 수정합니다
 // Day 3 질문은 금요일에만 다음 주 월요일로 설정하고, 다른 날짜에는 다음 날이 아닌 당일 기준으로 계산하도록 변경
 
-// Update the getAnswerDeadline function to handle Day 4 questions
+// Update the getAnswerDeadline function to handle Day 5 questions
 function getAnswerDeadline(questionDay: number): Date {
   const now = new Date()
   const isDay3 = questionDay === 3
   const isDay4 = questionDay === 4
+  const isDay5 = questionDay === 5
 
   // 현재 요일 확인 (0: 일요일, 1: 월요일, ..., 5: 금요일, 6: 토요일)
   const currentDayOfWeek = now.getDay()
   const isFriday = currentDayOfWeek === 5
   const isMonday = currentDayOfWeek === 1
+  const isTuesday = currentDayOfWeek === 2
+
+  // Day 5 질문이고 화요일이면 다음 날 오전 9시까지
+  if (isDay5 && isTuesday) {
+    const nextDay = new Date(now)
+    nextDay.setDate(now.getDate() + 1)
+    nextDay.setHours(9, 0, 0, 0)
+    return nextDay
+  }
 
   // Day 4 질문이고 월요일이면 다음 날 오전 9시까지
   if (isDay4 && isMonday) {
@@ -143,9 +166,9 @@ function getAnswerDeadline(questionDay: number): Date {
     return nextMonday
   }
 
-  // Day 3 또는 Day 4 질문이지만 특정 요일이 아닌 경우, 당일 기준으로 계산
+  // Day 3, Day 4, Day 5 질문이지만 특정 요일이 아닌 경우, 당일 기준으로 계산
   // 현재 시간이 오전 9시 이전이면 당일 오전 9시, 이후면 다음 날 오전 9시
-  if (isDay3 || isDay4) {
+  if (isDay3 || isDay4 || isDay5) {
     const today = new Date(now)
     if (now.getHours() < 9) {
       // 오전 9시 이전이면 당일 오전 9시

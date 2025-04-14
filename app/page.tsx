@@ -11,7 +11,7 @@ import { Clock } from "lucide-react"
 import { getTimeRemainingForSubmission } from "@/lib/utils"
 
 export default function Home() {
-  // 하드코딩된 Day 2 질문들 - ID 형식 수정
+  // 하드코딩된 Day 2~5 질문들
   const hardcodedQuestions = {
     frontend: {
       id: "q6", // frontend Day 2 질문 ID
@@ -159,9 +159,58 @@ export default function Home() {
         "<b>[첫 취업 준비생이라면?]</b><br> 팀 프로젝트에서 일정이 자꾸 밀려 팀 분위기가 가라앉은 상황이 있었습니다.<br> 제가 먼저 팀원들과 일정을 다시 정리하고 우선순위를 조정해 '작동하는 기능부터 완성하자'는 MVP 전략을 제안했습니다.<br> 이후 팀원 간 협업이 원활해졌고 프로젝트도 제시간에 마무리할 수 있었습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 신규 기능 런칭 프로젝트에서 PO가 중간 이탈해 일정이 크게 흔들린 적이 있습니다.<br> PM 부재 상태에서 주도적으로 요구사항 정리, 스프린트 재계획, QA 체크리스트 작성 등을 리드했고, 릴리즈를 무사히 완료했습니다.<br> 이후 회고에서 해당 경험이 계기가 되어 팀 내 기술 PM 역할을 제안받기도 했습니다.",
       days: 4,
     },
+    // Day 5 질문들 추가
+    q17: {
+      id: "q17",
+      title: "데이터 보안 설계",
+      content:
+        "시스템이나 서비스 설계 시 데이터 보안 또는 개인정보 보호를 고려한 사례가 있다면, 어떤 원칙에 따라 설계했는지 설명해 주세요.",
+      date: "2025-04-15",
+      category: "공통",
+      hint: "개인정보 암호화나 마스킹은 기술 이름보다, 왜 그렇게 설계했는지를 중심으로 설명해 보세요. 최소 권한 원칙, 접근 통제, 로깅 등 보안 설계의 관점이 담기면 강한 인상을 줄 수 있습니다.",
+      modelAnswer:
+        "<b>[첫 취업 준비생이라면?]</b><br> 학생 대상 설문 시스템을 만들면서, 이름과 이메일을 그대로 저장한 것이 개인정보 노출 위험이 크다는 피드백을 받았습니다.<br> 이후 이메일은 일부 마스킹 처리, 이름은 해시함수를 적용하여 저장 방식 자체를 바꿨습니다.<br> 처음엔 단순 저장만 고려했는데, 데이터 설계 자체에 보안 개념이 들어가야 함을 느꼈습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 회원 가입 및 주문 시스템 설계 시, 민감 데이터는 AES256으로 암호화하고, DB에는 접근 로깅을 남기도록 설정했습니다.<br> 또한 운영자 화면에서는 실명·연락처 정보를 마스킹 처리해 조회하도록 구성했고, 특정 권한 그룹에서만 접근 가능하도록 RBAC 기반 권한 제어를 적용했습니다.<br> 이후 개인정보보호 점검에서도 무이슈 통과 경험이 있습니다.",
+      days: 5,
+    },
+    q18: {
+      id: "q18",
+      title: "퍼포먼스 모니터링",
+      content:
+        "프론트엔드 성능 병목을 진단하고 개선한 경험이 있다면, 어떤 도구를 사용했고 어떤 수치를 중심으로 개선했는지 설명해 주세요.",
+      date: "2025-04-15",
+      category: "Frontend",
+      hint: 'DevTools나 Lighthouse에서 어떤 수치를 보고 문제를 파악했는지, 그리고 개선 전후 어떤 변화가 있었는지를 명확히 설명해 보세요. 단순히 "느렸다 → 빨라졌다"보다는 병목 구간을 정확히 짚는 것이 중요합니다.',
+      modelAnswer:
+        "<b>[첫 취업 준비생이라면?]</b><br> React 기반 포트폴리오 사이트에서 초기 로딩 속도가 지나치게 느렸고, Lighthouse 분석 결과 이미지와 폰트 로딩이 병목 원인이었습니다.<br> 이미지에는 Lazy Loading을 적용하고, 웹폰트를 preload 처리하여 FCP를 2초에서 0.9초로 개선했습니다.<br> 이 과정에서 성능 지표를 수치로 보며 개선하는 재미를 처음 느꼈습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 내부 CRM 시스템에서 유저 전환 시 LCP 지연이 발생했으며, DevTools 성능 탭을 통해 Layout Shift와 JS 실행 시간이 문제임을 파악했습니다.<br> chunk 분리, 이미지 최적화, critical CSS 추출 등 다각적 개선을 통해 주요 지표가 30~40% 개선되었고, 사용자 불만도 확연히 줄었습니다.<br> 이후 New Relic과 연동하여 배포 후에도 실시간 성능 지표를 모니터링하고 있습니다.",
+      days: 5,
+    },
+    q19: {
+      id: "q19",
+      title: "API 설계와 버전 관리 전략",
+      content:
+        "API를 설계하거나 운영하면서, 일관성을 유지하고 변경을 관리하기 위해 어떤 전략을 사용했는지 설명해 주세요. (버전 관리, 응답 포맷 설계, 호환성 유지 방식 등을 중심으로)",
+      date: "2025-04-15",
+      category: "Backend",
+      hint: '실무에서는 API가 한 번 공개되면 쉽게 바꿀 수 없습니다. 이 질문은 "처음부터 바뀔 수 있음을 고려하고 설계했는가"를 묻는 것입니다. URI 버전 관리, 응답 포맷 고정, Deprecation 정책 같은 구체적인 조치가 있다면 강력한 답변이 됩니다.',
+      modelAnswer:
+        "<b>[첫 취업 준비생이라면?]</b><br> 처음엔 기능만 되면 된다고 생각했는데, 프론트엔드 파트너가 다른 화면에서 재사용할 수 없다고 불편을 느끼는 걸 보고 설계가 중요하다는 걸 느꼈습니다.<br> 그 후에는 URI와 응답 포맷을 명확히 정의하고, 응답에 항상 status, message, data 필드를 고정해서 주도록 구조를 정리했습니다.<br> 추후에 기능이 추가될 때도 혼란 없이 API를 재사용할 수 있었고, 의도하지 않은 깨짐도 줄어들었습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> API 응답 포맷이 일관되지 않아 프론트와의 협업 효율이 떨어지는 문제가 반복됐습니다.<br> 이에 응답 구조를 JSON Schema 기반으로 명세화하고, Swagger 문서화와 함께 Lint를 통한 API 규칙 검사를 도입했습니다.<br> 또한 v1/v2로 URI 버전 관리 체계를 적용하고, Deprecation 시점과 호환 유지 기준을 문서로 정리해 신규 기능 도입 시 혼란을 최소화할 수 있었습니다.",
+      days: 5,
+    },
+    q20: {
+      id: "q20",
+      title: "스트레스 관리 및 동기 부여",
+      content:
+        "업무나 프로젝트에서 높은 스트레스를 받았던 상황에서, 본인은 어떻게 동기를 유지하고 팀 사기를 관리했는지 경험을 공유해 주세요.",
+      date: "2025-04-15",
+      category: "인성",
+      hint: "이 질문은 지원자가 힘들었던 상황이 궁금한 게 아니라, 그 상황에서 어떤 태도나 루틴으로 회복했는지를 보고자 합니다. 개인 회고, 동료 격려, 팀 분위기 전환 등 구체적인 실천 방식이 있으면 좋습니다.",
+      modelAnswer:
+        "<b>[첫 취업 준비생이라면?]</b><br> 졸업작품과 취업 준비가 겹쳐서 체력적으로도 정신적으로도 지치는 시기가 있었습니다.<br> 스스로 동기부여를 유지하기 위해 매일 일정 끝에 소감 기록을 남겼고, 팀원들에게도 짧은 회고 타임을 제안했습니다.<br> 이를 통해 서로 격려하고 장점을 발견하는 분위기가 생기면서, 마감도 무사히 넘길 수 있었습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 1년간 긴 유지보수 업무가 이어지며 팀 전체 사기가 저하되던 시기가 있었습니다.<br> 작은 성공도 주간 회고에서 공유하고, '미니 챌린지'라는 이름으로 스스로 성장 주제를 정해 발표하는 시간을 만들었습니다.<br> 팀원들 사이에 다시 자율성과 성취감이 생기면서 분위기와 퍼포먼스가 함께 회복되었습니다.",
+      days: 5,
+    },
   }
 
-  // 현재 날짜 기준으로 Day 계산 - Day 4는 2025년 4월 14일 오전 9시 이후에 공개
+  // 현재 날짜 기준으로 Day 계산 - Day 5는 2025년 4월 15일 오전 9시 이후에 공개
   const calculateDayCount = () => {
     const now = new Date()
 
@@ -169,8 +218,12 @@ export default function Home() {
     const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 월은 0부터 시작하므로 4월은 3
     // 2025년 4월 14일 오전 9시 (Day 4 공개 시간)
     const day4ReleaseTime = new Date(2025, 3, 14, 9, 0, 0)
+    // 2025년 4월 15일 오전 9시 (Day 5 공개 시간)
+    const day5ReleaseTime = new Date(2025, 3, 15, 9, 0, 0)
 
-    if (now >= day4ReleaseTime) {
+    if (now >= day5ReleaseTime) {
+      return 5 // Day 5 공개됨
+    } else if (now >= day4ReleaseTime) {
       return 4 // Day 4 공개됨
     } else if (now >= day3ReleaseTime) {
       return 3 // Day 3 공개됨
@@ -179,7 +232,7 @@ export default function Home() {
     return 2 // 그 전에는 Day 2
   }
 
-  // 현재 날짜 기준 Day 계산 - 항상 2 반환
+  // 현재 날짜 기준 Day 계산
   const dayCount = calculateDayCount()
 
   // 카테고리별 질문 확인 상태 관리
@@ -202,9 +255,20 @@ export default function Home() {
     const now = new Date()
     const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 2025년 4월 11일 오전 9시
     const day4ReleaseTime = new Date(2025, 3, 14, 9, 0, 0) // 2025년 4월 14일 오전 9시
+    const day5ReleaseTime = new Date(2025, 3, 15, 9, 0, 0) // 2025년 4월 15일 오전 9시
 
+    // Day 5 공개 시간이 되었는지 확인
+    if (now >= day5ReleaseTime) {
+      // Day 5 질문 표시
+      return {
+        frontend: hardcodedQuestions.q18, // Day 5 Frontend 질문
+        backend: hardcodedQuestions.q19, // Day 5 Backend 질문
+        common: hardcodedQuestions.q17, // Day 5 공통 질문
+        personality: hardcodedQuestions.q20, // Day 5 인성 질문
+      }
+    }
     // Day 4 공개 시간이 되었는지 확인
-    if (now >= day4ReleaseTime) {
+    else if (now >= day4ReleaseTime) {
       // Day 4 질문 표시
       return {
         frontend: hardcodedQuestions.q14, // Day 4 Frontend 질문
@@ -401,9 +465,7 @@ export default function Home() {
           {questions.frontend ? (
             <QuestionCard question={questions.frontend} category="Frontend" onConfirmRead={handleQuestionConfirmed} />
           ) : (
-            <div className="p-4 bg-hanghae-gray rounded-md text-hanghae-text border-[#3a3e41] border-[1px]">
-              오늘의 Frontend 질문이 준비되지 않았습니다.
-            </div>
+            <div className="p-4 bg-hanghae-gray rounded-md text-gray-400">질문이 없습니다.</div>
           )}
         </TabsContent>
 
@@ -411,9 +473,7 @@ export default function Home() {
           {questions.backend ? (
             <QuestionCard question={questions.backend} category="Backend" onConfirmRead={handleQuestionConfirmed} />
           ) : (
-            <div className="p-4 bg-hanghae-gray rounded-md text-hanghae-text border-[#3a3e41] border-[1px]">
-              오늘의 Backend 질문이 준비되지 않았습니다.
-            </div>
+            <div className="p-4 bg-hanghae-gray rounded-md text-gray-400">질문이 없습니다.</div>
           )}
         </TabsContent>
 
@@ -421,9 +481,7 @@ export default function Home() {
           {questions.common ? (
             <QuestionCard question={questions.common} category="공통" onConfirmRead={handleQuestionConfirmed} />
           ) : (
-            <div className="p-4 bg-hanghae-gray rounded-md text-hanghae-text border-[#3a3e41] border-[1px]">
-              오늘의 공통 질문이 준비되지 않았습니다.
-            </div>
+            <div className="p-4 bg-hanghae-gray rounded-md text-gray-400">질문이 없습니다.</div>
           )}
         </TabsContent>
 
@@ -431,35 +489,24 @@ export default function Home() {
           {questions.personality ? (
             <QuestionCard question={questions.personality} category="인성" onConfirmRead={handleQuestionConfirmed} />
           ) : (
-            <div className="p-4 bg-hanghae-gray rounded-md text-hanghae-text border-[#3a3e41] border-[1px]">
-              오늘의 인성 질문이 준비되지 않았습니다.
-            </div>
+            <div className="p-4 bg-hanghae-gray rounded-md text-gray-400">질문이 없습니다.</div>
           )}
         </TabsContent>
       </Tabs>
 
-      {/* 답변 작성하기 폼 - 해당 카테고리 질문이 확인된 경우에만 표시 */}
-      {confirmedCategories[activeTab] && (
-        <div className="mt-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-hanghae-text">답변 작성하기</h2>
-            <div className="flex items-center text-main-red font-bold">
-              <Clock className="h-4 w-4 mr-1" />
-              <span className="text-sm">인증 마감까지</span>
-              <span className="ml-2">{timeRemaining}</span>
-            </div>
-          </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="col-span-1">
           <AnswerForm questionId={getCurrentQuestionId()} category={getCurrentCategory()} />
         </div>
-      )}
 
-      {/* 모범 답안 - 항상 표시 */}
-      {questions[activeTab] && (
-        <ModelAnswer
-          modelAnswer={questions[activeTab].modelAnswer || ""}
-          questionDay={questions[activeTab].days || 1}
-        />
-      )}
+        <div className="col-span-1">
+          <div className="flex items-center space-x-2 mb-2">
+            <Clock className="h-4 w-4 text-gray-500" />
+            <p className="text-sm text-gray-500">다음 질문까지 남은 시간: {timeRemaining}</p>
+          </div>
+          <ModelAnswer question={questions[activeTab]} />
+        </div>
+      </div>
     </PageLayout>
   )
 }

@@ -1,16 +1,5 @@
 "use client"
 import type { Question } from "@/lib/questions"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { ChevronDown, ChevronRight, ChevronUp, Clock } from "lucide-react"
-import { useState, useEffect } from "react"
-import PageLayout from "@/components/page-layout"
-import { useAuth } from "@/lib/auth-context"
-import type { Answer } from "@/lib/answers"
-import { canViewModelAnswer } from "@/lib/utils"
-import { markQuestionAsRead } from "@/lib/user-activity"
 
 export default function QuestionsPage() {
   // 하드코딩된 Day 1과 Day 2 질문들 - ID 형식 수정
@@ -270,418 +259,61 @@ export default function QuestionsPage() {
         "<b>[첫 취업 준비생이라면?]</b><br> 팀 프로젝트에서 일정이 자꾸 밀려 팀 분위기가 가라앉은 상황이 있었습니다.<br> 제가 먼저 팀원들과 일정을 다시 정리하고 우선순위를 조정해 '작동하는 기능부터 완성하자'는 MVP 전략을 제안했습니다.<br> 이후 팀원 간 협업이 원활해졌고 프로젝트도 제시간에 마무리할 수 있었습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 신규 기능 런칭 프로젝트에서 PO가 중간 이탈해 일정이 크게 흔들린 적이 있습니다.<br> PM 부재 상태에서 주도적으로 요구사항 정리, 스프린트 재계획, QA 체크리스트 작성 등을 리드했고, 릴리즈를 무사히 완료했습니다.<br> 이후 회고에서 해당 경험이 계기가 되어 팀 내 기술 PM 역할을 제안받기도 했습니다.",
       days: 4,
     },
-  ]
-
-  const [questions, setQuestions] = useState<Question[]>(hardcodedQuestions)
-  const [filteredQuestions, setFilteredQuestions] = useState<Question[]>(hardcodedQuestions)
-  const [selectedCategory, setSelectedCategory] = useState("전체")
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [isLoading, setIsLoading] = useState(false)
-  const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null)
-  const [publicAnswers, setPublicAnswers] = useState<Answer[]>([])
-  const [isLoadingAnswers, setIsLoadingAnswers] = useState(false)
-  const { user } = useAuth()
-  const userId = user?.userId
-  const [nextQuestionTime, setNextQuestionTime] = useState<string>("")
-  const [hasMarkedRead, setHasMarkedRead] = useState(false)
-  const [isDialogOpen, setIsDialogOpen] = useState(false)
-  const [showModelAnswer, setShowModelAnswer] = useState(false) // 모범 답변 토글 상태
-  const [canViewAnswer, setCanViewAnswer] = useState(false) // 모범 답변 볼 수 있는지 여부
-  const [timeRemaining, setTimeRemaining] = useState("") // 남은 시간
-
-  // 현재 날짜 기준으로 Day 계산 - 시간에 따라 Day 3 표시
-  const calculateDayCount = () => {
-    const now = new Date()
-
-    // 2025년 4월 11일 오전 9시 (Day 3 공개 시간)
-    const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 월은 0부터 시작하므로 4월은 3
-
-    // 현재 시간이 2025년 4월 11일 오전 9시 이후인지 확인
-    if (now >= day3ReleaseTime) {
-      return 3 // Day 3 표시
-    }
-
-    return 2 // 그 전에는 Day 2 표시
-  }
-
-  // 현재 날짜 기준 Day 계산
-  const currentDay = calculateDayCount()
-
-  // 카테고리별 배지 색상 설정
-  const getBadgeClass = (category: string) => {
-    switch (category) {
-      case "Frontend":
-        return "bg-[#4A6EB0] hover:bg-[#4A6EB0]/90 text-white"
-      case "Backend":
-        return "bg-[#6B8E23] hover:bg-[#6B8E23]/90 text-white"
-      case "공통":
-        return "bg-[#9370DB] hover:bg-[#9370DB]/90 text-white"
-      case "인성":
-        return "bg-[#FF8C00] hover:bg-[#FF8C00]/90 text-white"
-      default:
-        return "bg-hanghae-light hover:bg-hanghae-light/90 text-hanghae-text"
-    }
-  }
-
-  // 날짜 포맷팅 함수 추가
-  const formatDate = (dateString: string) => {
-    try {
-      const date = new Date(dateString)
-      if (isNaN(date.getTime())) {
-        return "04/10" // 기본값 설정
-      }
-      const year = date.getFullYear().toString().slice(2)
-      const month = (date.getMonth() + 1).toString().padStart(2, "0")
-      const day = date.getDate().toString().padStart(2, "0")
-      return `${year}/${month}/${day}`
-    } catch (error) {
-      console.error("날짜 포맷팅 오류:", error)
-      return "04/10" // 오류 시 기본값
-    }
-  }
-
-  // 질문 필터링 함수 수정 - 카테고리별 필터링 유지 및 시간 기반 필터링 추가
-  const filterQuestions = (category) => {
-    setSelectedCategory(category)
-    setIsDropdownOpen(false)
-
-    // 현재 시간 확인
-    const now = new Date()
-    const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 2025년 4월 11일 오전 9시
-    const day4ReleaseTime = new Date(2025, 3, 14, 9, 0, 0) // 2025년 4월 14일 오전 9시
-
-    // 시간 기반 필터링된 질문 목록
-    const timeFilteredQuestions = [...hardcodedQuestions].filter((q) => {
-      // Day 4 질문은 4월 14일 오전 9시 이후에만 표시
-      if (q.days === 4) {
-        return now >= day4ReleaseTime
-      }
-      // Day 3 질문은 오전 9시 이후에만 표시
-      if (q.days === 3) {
-        return now >= day3ReleaseTime
-      }
-      return true // Day 1, 2 질문은 항상 표시
-    })
-
-    // 카테고리 필터링 적용
-    if (category === "전체") {
-      setFilteredQuestions(timeFilteredQuestions)
-    } else {
-      const filtered = timeFilteredQuestions.filter((q) => q.category === category)
-      setFilteredQuestions(filtered)
-    }
-  }
-
-  const fetchPublicAnswers = async (questionId: string) => {
-    setIsLoadingAnswers(true)
-    try {
-      const response = await fetch(`/api/answers?questionId=${questionId}&publicOnly=true`)
-      if (response.ok) {
-        const data = await response.json()
-        if (data.success && data.data) {
-          setPublicAnswers(data.data)
-        } else {
-          setPublicAnswers([])
-        }
-      } else {
-        setPublicAnswers([])
-      }
-    } catch (error) {
-      console.error("답변 가져오기 오류:", error)
-      setPublicAnswers([])
-    } finally {
-      setIsLoadingAnswers(false)
-    }
-  }
-
-  // 모범 답변 볼 수 있는지 확인하는 로직 수정
-  const handleQuestionClick = async (question: Question) => {
-    setSelectedQuestion(question)
-    setShowModelAnswer(false) // 모달 열릴 때 모범 답변 숨기기
-
-    // Day3 문제인지 확인하고 모범 답변 볼 수 있는지 체크
-    const isDay3Question = question.days === 3
-    if (isDay3Question) {
-      // Day3 질문은 이미 어제 저녁 8시에 공개되었으므로 항상 볼 수 있음
-      setCanViewAnswer(true)
-    } else {
-      // Day1, Day2 문제는 저녁 8시 이후에만 볼 수 있음
-      setCanViewAnswer(canViewModelAnswer())
-    }
-
-    // Mark question as read only if it hasn't been marked as read before
-    if (userId && !hasMarkedRead) {
-      markQuestionAsRead(userId, question.id)
-      setHasMarkedRead(true) // Set the state to true after marking as read
-    }
-  }
-
-  // 남은 시간 계산 함수
-  const calculateTimeRemaining = () => {
-    const now = new Date()
-    const releaseHour = 20 // 저녁 8시
-
-    // 오늘 저녁 8시
-    const today8PM = new Date(now)
-    today8PM.setHours(releaseHour, 0, 0, 0)
-
-    if (now >= today8PM) {
-      setTimeRemaining("")
-      return "모범 답변이 공개되었습니다"
-    }
-
-    // 남은 시간 계산 (hh:mm:ss 형식)
-    const diffMs = today8PM.getTime() - now.getTime()
-    const hours = Math.floor(diffMs / (1000 * 60 * 60))
-    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
-    const seconds = Math.floor((diffMs % (1000 * 60)) / 1000)
-
-    const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
-    setTimeRemaining(formattedTime)
-    return formattedTime
-  }
-
-  useEffect(() => {
-    if (selectedQuestion) {
-      fetchPublicAnswers(selectedQuestion.id)
-    }
-  }, [selectedQuestion])
-
-  // 시간 업데이트를 위한 타이머 설정 부분도 수정
-  useEffect(() => {
-    if (selectedQuestion?.days === 3) {
-      // Day3 문제인 경우에만 타이머 설정
-      calculateTimeRemaining()
-      const timer = setInterval(() => {
-        const remaining = calculateTimeRemaining()
-        if (remaining === "모범 답변이 공개되었습니다") {
-          setCanViewAnswer(true)
-          clearInterval(timer)
-        }
-      }, 1000)
-
-      return () => clearInterval(timer)
-    }
-  }, [selectedQuestion])
-
-  const categories = ["전체", "Frontend", "Backend", "공통", "인성"]
-
-  // useEffect 내의 정렬 로직도 수정
-  useEffect(() => {
-    // 현재 시간 확인
-    const now = new Date()
-    const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 2025년 4월 11일 오전 9시
-    const day4ReleaseTime = new Date(2025, 3, 14, 9, 0, 0) // 2025년 4월 14일 오전 9시
-
-    // 시간 기반 필터링
-    const timeFilteredQuestions = [...hardcodedQuestions].filter((q) => {
-      // Day 4 질문은 4월 14일 오전 9시 이후에만 표시
-      if (q.days === 4) {
-        return now >= day4ReleaseTime
-      }
-      // Day 3 질문은 오전 9시 이후에만 표시
-      if (q.days === 3) {
-        return now >= day3ReleaseTime
-      }
-      return true // Day 1, 2 질문은 항상 표시
-    })
-
-    // 질문을 Day 기준으로 내림차순 정렬 (최신순)
-    const sortedQuestions = timeFilteredQuestions.sort((a, b) => {
-      // 먼저 Day로 내림차순 정렬
-      if (b.days !== a.days) {
-        return b.days - a.days
-      }
-      // Day가 같으면 ID로 정렬 (q1, q2, q2-1, q3, q3-1, q4 순서)
-      return a.id.localeCompare(b.id)
-    })
-
-    setQuestions(sortedQuestions)
-    setFilteredQuestions(sortedQuestions)
-  }, [])
-
-  // Add click-outside handler for dropdown
-  useEffect(() => {
-    const handleClickOutside = (event) => {
-      // Check if dropdown is open and the click is outside dropdown area
-      if (isDropdownOpen && event.target.closest("[data-dropdown-container]") === null) {
-        setIsDropdownOpen(false)
-      }
-    }
-
-    // Add event listener when dropdown is open
-    if (isDropdownOpen) {
-      document.addEventListener("mousedown", handleClickOutside)
-    }
-
-    // Clean up the event listener when dropdown closes or component unmounts
-    return () => {
-      document.removeEventListener("mousedown", handleClickOutside)
-    }
-  }, [isDropdownOpen])
-
-  return (
-    <PageLayout>
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-hanghae-text">지난 면접 질문</h1>
-        <div className="relative" data-dropdown-container>
-          <Button
-            variant="outline"
-            className="flex items-center gap-2"
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-          >
-            {selectedCategory}
-            <ChevronDown className="h-4 w-4" />
-          </Button>
-
-          {isDropdownOpen && (
-            <div className="absolute right-0 mt-2 w-48 bg-hanghae-gray border border-[#3a3e41] rounded-md shadow-lg z-10">
-              {categories.map((category) => (
-                <button
-                  key={category}
-                  className="block w-full text-left px-4 py-2 hover:bg-hanghae-light"
-                  onClick={() => filterQuestions(category)}
-                >
-                  {category}
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
-
-      <div className="space-y-4">
-        {filteredQuestions.map((question) => (
-          <Dialog
-            key={question.id}
-            open={isDialogOpen && selectedQuestion?.id === question.id}
-            onOpenChange={(open) => {
-              setIsDialogOpen(open)
-              if (open) {
-                setHasMarkedRead(false) // Reset the state when the dialog is opened
-                handleQuestionClick(question)
-              } else {
-                setSelectedQuestion(null)
-              }
-            }}
-          >
-            <DialogTrigger asChild>
-              <Card className="hover:bg-hanghae-light/50 transition-colors cursor-pointer border-[#3a3e41] border-[1px]">
-                <CardHeader className="pb-2">
-                  <div className="flex justify-between items-start">
-                    <CardTitle className="text-lg">{question.title}</CardTitle>
-                    <Badge className={getBadgeClass(question.category)}>{question.category}</Badge>
-                  </div>
-                  <div className="text-sm text-hanghae-text/70">
-                    Day {question.days} ({formatDate(question.date)})
-                  </div>
-                </CardHeader>
-                <CardContent className="pb-4">
-                  <p className="text-sm text-hanghae-text/70 line-clamp-2">{question.content}</p>
-                </CardContent>
-              </Card>
-            </DialogTrigger>
-            <DialogContent
-              className="max-w-3xl max-h-[80vh] overflow-y-auto overflow-x-hidden"
-              style={{ wordBreak: "break-all" }}
-            >
-              <DialogHeader>
-                <div className="flex justify-between items-center pr-8">
-                  <DialogTitle className="text-xl">{selectedQuestion?.title}</DialogTitle>
-                  <Badge className={selectedQuestion ? getBadgeClass(selectedQuestion.category) : ""}>
-                    {selectedQuestion?.category}
-                  </Badge>
-                </div>
-                <div className="text-sm text-hanghae-text/70">
-                  Day {selectedQuestion?.days} ({selectedQuestion ? formatDate(selectedQuestion.date) : ""})
-                </div>
-              </DialogHeader>
-              <div className="space-y-6 mt-4">
-                <div
-                  className="prose dark:prose-invert max-w-none text-hanghae-text break-words"
-                  style={{ wordBreak: "break-all" }}
-                >
-                  <p>{selectedQuestion?.content}</p>
-
-                  {selectedQuestion?.hint && (
-                    <div className="mt-4 p-4 bg-hanghae-light rounded-md">
-                      <h3 className="text-sm font-medium mb-1">힌트</h3>
-                      <p className="text-sm">{selectedQuestion.hint}</p>
-                    </div>
-                  )}
-                </div>
-
-                {/* 모범 답변 - 오늘의 문제는 시간에 따라 표시 */}
-                {selectedQuestion?.modelAnswer && (
-                  <div className="mt-6">
-                    <button
-                      onClick={() => canViewAnswer && setShowModelAnswer(!showModelAnswer)}
-                      className="flex items-center text-lg font-medium mb-3 w-full justify-between"
-                      disabled={!canViewAnswer}
-                    >
-                      <span>모범 답변</span>
-                      {selectedQuestion.days === 2 && !canViewAnswer ? (
-                        <div className="flex items-center text-sm text-hanghae-text/70">
-                          <Clock className="h-4 w-4 mr-1" />
-                          <span>{timeRemaining ? `${timeRemaining} 후 공개` : "저녁 8시에 공개됩니다"}</span>
-                        </div>
-                      ) : showModelAnswer ? (
-                        <ChevronUp className="h-5 w-5" />
-                      ) : (
-                        <ChevronRight className="h-5 w-5" />
-                      )}
-                    </button>
-                    {canViewAnswer && showModelAnswer && (
-                      <div
-                        className="bg-hanghae-light p-4 rounded-md break-words text-sm"
-                        dangerouslySetInnerHTML={{ __html: selectedQuestion.modelAnswer }}
-                      />
-                    )}
-                    {selectedQuestion.days === 2 && !canViewAnswer && (
-                      <div className="bg-hanghae-light p-4 rounded-md text-center text-hanghae-text/70">
-                        모범 답변은 저녁 8시에 공개됩니다.
-                      </div>
-                    )}
-                  </div>
-                )}
-
-                {/* 공개된 답변들 */}
-                <div className="mt-6">
-                  <h3 className="text-lg font-medium mb-3">공개된 답변 ({publicAnswers.length})</h3>
-                  {isLoadingAnswers ? (
-                    <div className="space-y-3">
-                      {[1, 2].map((i) => (
-                        <div key={i} className="bg-hanghae-light p-4 rounded-md animate-pulse">
-                          <div className="flex justify-between items-center mb-2">
-                            <div className="h-4 bg-hanghae-gray rounded w-24"></div>
-                            <div className="h-3 bg-hanghae-gray rounded w-32"></div>
-                          </div>
-                          <div className="h-16 bg-hanghae-gray rounded w-full"></div>
-                        </div>
-                      ))}
-                    </div>
-                  ) : publicAnswers.length > 0 ? (
-                    <div className="space-y-3 max-h-[300px] overflow-y-auto">
-                      {publicAnswers.map((answer) => (
-                        <div key={answer.id} className="bg-hanghae-light p-4 rounded-md">
-                          <div className="mb-2">
-                            <span className="font-medium">{answer.nickname}</span>
-                          </div>
-                          <p className="text-sm whitespace-pre-wrap break-words">{answer.content}</p>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="bg-hanghae-light p-4 rounded-md">
-                      <p className="text-hanghae-text/70 text-center">아직 공개된 답변이 없습니다.</p>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </DialogContent>
-          </Dialog>
-        ))}
-      </div>
-    </PageLayout>
-  )
-}
+    // Day 5 질문들
+    {
+      id: "q17",
+      title: "CI/CD 파이프라인 구축 경험",
+      content:
+        "CI/CD 파이프라인을 구축하고 운영한 경험에 대해 설명해주십시오. 어떤 도구를 사용했으며, 파이프라인을 통해 어떤 이점을 얻었습니까?",
+      date: "2025-04-15",
+      category: "DevOps",
+      hint: "CI/CD 파이프라인은 코드 변경 사항을 자동으로 빌드, 테스트 및 배포하는 프로세스입니다. Jenkins, GitLab CI, GitHub Actions 등의 도구를 사용한 경험을 예시로 들어 설명할 수 있습니다.",
+      modelAnswer:
+        "<b>[첫 취업 준비생이라면?]</b><br> 졸업 프로젝트에서 GitHub Actions를 사용하여 CI/CD 파이프라인을 구축했습니다. 코드를 push할 때마다 자동으로 빌드 및 테스트가 실행되도록 설정했으며, 테스트가 통과되면 자동으로 배포되도록 구성했습니다. 이를 통해 개발 초기 단계에서 오류를 빠르게 발견하고 수정할 수 있었으며, 배포 과정을 자동화하여 시간을 절약할 수 있었습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 현재 회사에서 Jenkins를 사용하여 CI/CD 파이프라인을 구축하고 운영하고 있습니다. Jenkinsfile을 통해 파이프라인을 정의하고, 코드 품질 검사, 단위 테스트, 통합 테스트, 배포 등의 단계를 자동화했습니다. 또한, Docker를 사용하여 애플리케이션을 컨테이너화하고, Kubernetes를 사용하여 배포 환경을 관리하고 있습니다. 이를 통해 배포 시간을 단축하고, 배포 오류를 줄일 수 있었으며, 개발 생산성을 향상시킬 수 있었습니다.",
+      days: 5,
+    },
+    {
+      id: "q18",
+      title: "모니터링 시스템 구축 경험",
+      content:
+        "애플리케이션 또는 시스템의 모니터링 시스템을 구축하고 운영한 경험에 대해 설명해주십시오. 어떤 지표를 모니터링했으며, 어떤 도구를 사용했습니까?",
+      date: "2025-04-15",
+      category: "DevOps",
+      hint: "모니터링 시스템은 애플리케이션 또는 시스템의 상태를 실시간으로 추적하고 문제를 감지하는 데 사용됩니다. CPU 사용량, 메모리 사용량, 디스크 사용량, 네트워크 트래픽, 응답 시간 등의 지표를 모니터링할 수 있습니다. Prometheus, Grafana, ELK Stack 등의 도구를 사용한 경험을 예시로 들어 설명할 수 있습니다.",
+      modelAnswer:
+        "<b>[첫 취업 준비생이라면?]</b><br> 개인 프로젝트에서 Prometheus와 Grafana를 사용하여 애플리케이션의 모니터링 시스템을 구축했습니다. CPU 사용량, 메모리 사용량, 응답 시간 등의 지표를 모니터링하도록 설정했으며, Grafana를 사용하여 시각화된 대시보드를 만들었습니다. 이를 통해 애플리케이션의 성능을 실시간으로 추적하고, 문제가 발생했을 때 빠르게 대응할 수 있었습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 현재 회사에서 ELK Stack(Elasticsearch, Logstash, Kibana)을 사용하여 시스템 로그를 수집하고 분석하는 모니터링 시스템을 구축하고 운영하고 있습니다. Logstash를 사용하여 다양한 소스에서 로그를 수집하고, Elasticsearch에 저장합니다. Kibana를 사용하여 로그를 검색하고 분석하며, 시각화된 대시보드를 만들었습니다. 이를 통해 시스템의 문제를 빠르게 진단하고 해결할 수 있었으며, 시스템 운영 효율성을 향상시킬 수 있었습니다.",
+      days: 5,
+    },
+    {
+      id: "q19",
+      title: "클라우드 환경에서의 확장성 설계",
+      content:
+        "클라우드 환경에서 애플리케이션의 확장성을 고려하여 설계한 경험에 대해 설명해주십시오. 어떤 기술과 전략을 사용했으며, 어떤 이점을 얻었습니까?",
+      date: "2025-04-15",
+      category: "Cloud",
+      hint: "클라우드 환경은 필요에 따라 컴퓨팅 자원을 쉽게 확장하거나 축소할 수 있는 장점을 제공합니다. Auto Scaling, Load Balancing, Microservices 등의 기술과 전략을 사용하여 애플리케이션의 확장성을 향상시킬 수 있습니다.",
+      modelAnswer:
+        "<b>[첫 취업 준비생이라면?]</b><br> AWS Auto Scaling 그룹을 사용하여 웹 애플리케이션의 확장성을 설계했습니다. 트래픽이 증가하면 자동으로 인스턴스 수를 늘리고, 트래픽이 감소하면 인스턴스 수를 줄이도록 설정했습니다. 이를 통해 애플리케이션이 항상 안정적으로 서비스를 제공할 수 있도록 보장했습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 현재 회사에서 Kubernetes를 사용하여 마이크로서비스 아키텍처 기반의 애플리케이션을 배포하고 관리하고 있습니다. Kubernetes는 Auto Scaling, Load Balancing 등의 기능을 제공하여 애플리케이션의 확장성을 쉽게 관리할 수 있도록 해줍니다. 또한, 컨테이너 오케스트레이션 도구를 사용하여 애플리케이션의 배포 및 관리를 자동화하고, 개발 생산성을 향상시킬 수 있었습니다.",
+      days: 5,
+    },
+    {
+      id: "q20",
+      title: "데이터 파이프라인 구축 경험",
+      content:
+        "대규모 데이터를 처리하기 위한 데이터 파이프라인을 구축하고 운영한 경험에 대해 설명해주십시오. 어떤 기술을 사용했으며, 데이터 품질을 어떻게 보장했습니까?",
+      date: "2025-04-15",
+      category: "Data Engineering",
+      hint: "데이터 파이프라인은 데이터를 수집, 처리, 저장 및 분석하는 일련의 단계를 자동화하는 프로세스입니다. Apache Kafka, Apache Spark, Apache Hadoop 등의 기술을 사용하여 데이터 파이프라인을 구축할 수 있습니다.",
+      modelAnswer:
+        "<b>[첫 취업 준비생이라면?]</b><br> 학교 프로젝트에서 Apache Kafka와 Apache Spark를 사용하여 실시간 데이터 파이프라인을 구축했습니다. Kafka를 사용하여 데이터를 수집하고, Spark를 사용하여 데이터를 처리하고 분석했습니다. 또한, 데이터 품질을 보장하기 위해 데이터 유효성 검사 및 데이터 정제 단계를 추가했습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 현재 회사에서 Apache Hadoop과 Apache Spark를 사용하여 대규모 데이터 파이프라인을 구축하고 운영하고 있습니다. Hadoop을 사용하여 데이터를 저장하고, Spark를 사용하여 데이터를 처리하고 분석합니다. 또한, 데이터 품질을 보장하기 위해 데이터 프로파일링, 데이터 유효성 검사, 데이터 정제, 데이터 변환 등의 단계를 포함하는 데이터 품질 관리 시스템을 구축했습니다.",
+      days: 5,
+    },
+    {
+      id: "q21",
+      title: "애자일 개발 방법론 경험",
+      content:
+        "애자일 개발 방법론을 사용하여 프로젝트를 진행한 경험에 대해 설명해주십시오. 어떤 애자일 방법론을 사용했으며, 어떤 이점을 얻었습니까?",
+      date: "2025-04-15",
+      category: "프로세스",
+      hint: "애자일 개발 방법론은 변화에 유연하게 대응하고 빠른 피드백을 통해 제품을 개선하는 데 중점을 둡니다. Scrum, Kanban, XP 등의 애자일 방법론을 사용한 경험을 예시로 들어 설명할 수 있습니다.",
+\
