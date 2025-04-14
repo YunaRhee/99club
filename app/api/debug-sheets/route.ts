@@ -1,6 +1,14 @@
 import { google } from "googleapis"
 import { NextResponse } from "next/server"
 
+// 타입 정의 추가
+interface QuestionSheetData {
+  exists: boolean
+  rowCount: number
+  data: any[]
+  error?: string // error 속성 추가
+}
+
 export async function GET() {
   try {
     // 하드코딩된 인증 정보
@@ -46,7 +54,7 @@ export async function GET() {
       const sheetsList = testResponse.data.sheets?.map((sheet) => sheet.properties?.title) || []
 
       // Question 시트 데이터 가져오기
-      let questionSheetData = { exists: false, rowCount: 0, data: [] }
+      let questionSheetData: QuestionSheetData = { exists: false, rowCount: 0, data: [] }
       try {
         const questionSheet = await sheets.spreadsheets.values.get({
           spreadsheetId: spreadsheetId,
