@@ -8,12 +8,14 @@ import PageLayout from "@/components/page-layout"
 import { formatDateShort } from "@/lib/utils"
 import { getAnswersByQuestionId } from "@/lib/answers"
 import AnswerList from "@/components/answer-list"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export default function QuestionsPage() {
   const [selectedQuestion, setSelectedQuestion] = useState<any>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [publicAnswers, setPublicAnswers] = useState<any[]>([])
   const [isLoadingAnswers, setIsLoadingAnswers] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState<string>("all") // 카테고리 필터링을 위한 상태 추가
 
   // 하드코딩된 질문들 사용
   const questions = [
@@ -258,6 +260,10 @@ export default function QuestionsPage() {
     },
   ]
 
+  // 카테고리별 필터링된 질문 목록
+  const filteredQuestions =
+    selectedCategory === "all" ? questions : questions.filter((q) => q.category === selectedCategory)
+
   // 질문 클릭 핸들러
   const handleQuestionClick = async (question: any) => {
     setSelectedQuestion(question)
@@ -277,8 +283,24 @@ export default function QuestionsPage() {
 
   return (
     <PageLayout title="지난 면접 질문">
+      {/* 카테고리 필터 드롭다운 추가 */}
+      <div className="mb-6">
+        <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+          <SelectTrigger className="w-[180px]">
+            <SelectValue placeholder="카테고리 선택" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">전체</SelectItem>
+            <SelectItem value="공통">공통</SelectItem>
+            <SelectItem value="Backend">Backend</SelectItem>
+            <SelectItem value="Frontend">Frontend</SelectItem>
+            <SelectItem value="인성">인성</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
       <div className="space-y-4">
-        {questions.map((question) => (
+        {filteredQuestions.map((question) => (
           <Card
             key={question.id}
             className="bg-hanghae-gray border-[#3a3e41] border-[1px] cursor-pointer hover:border-main-red transition-colors"
