@@ -1,8 +1,19 @@
 "use client"
 import type { Question } from "@/lib/questions"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Badge } from "@/components/ui/badge"
+import { Button } from "@/components/ui/button"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { ChevronDown, ChevronRight, ChevronUp, Clock } from "lucide-react"
+import { useState, useEffect } from "react"
+import PageLayout from "@/components/page-layout"
+import { useAuth } from "@/lib/auth-context"
+import type { Answer } from "@/lib/answers"
+import { canViewModelAnswer } from "@/lib/utils"
+import { markQuestionAsRead } from "@/lib/user-activity"
 
 export default function QuestionsPage() {
-  // 하드코딩된 Day 1과 Day 2 질문들 - ID 형식 수정
+  // 하드코딩된 Day 1~5 질문들 - ID 형식 수정
   const hardcodedQuestions: Question[] = [
     // Day 1 질문들
     {
@@ -316,4 +327,505 @@ export default function QuestionsPage() {
       date: "2025-04-15",
       category: "프로세스",
       hint: "애자일 개발 방법론은 변화에 유연하게 대응하고 빠른 피드백을 통해 제품을 개선하는 데 중점을 둡니다. Scrum, Kanban, XP 등의 애자일 방법론을 사용한 경험을 예시로 들어 설명할 수 있습니다.",
-\
+      modelAnswer:
+        "<b>[첫 취업 준비생이라면?]</b><br> 스크럼을 사용하여 팀 프로젝트를 진행했습니다. 매일 스탠드업 미팅을 통해 진행 상황을 공유하고, 스프린트 리뷰를 통해 제품을 개선했습니다. 또한, 회고를 통해 팀의 문제점을 파악하고 개선했습니다. 이를 통해 팀원 간의 협업을 강화하고, 제품 개발 속도를 향상시킬 수 있었습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 현재 회사에서 칸반을 사용하여 프로젝트를 진행하고 있습니다. 칸반 보드를 통해 작업 흐름을 시각화하고, WIP(Work In Progress) 제한을 통해 작업량을 조절하고 있습니다. 또한, 지속적인 피드백을 통해 제품을 개선하고 있습니다. 이를 통해 팀의 생산성을 향상시키고, 제품 품질을 향상시킬 수 있었습니다.",
+      days: 5,
+    },
+    {
+      id: "q17",
+      title: "데이터 보안 설계",
+      content:
+        "시스템이나 서비스 설계 시 데이터 보안 또는 개인정보 보호를 고려한 사례가 있다면, 어떤 원칙에 따라 설계했는지 설명해 주세요.",
+      date: "2025-04-15",
+      category: "공통",
+      hint: "개인정보 암호화나 마스킹은 기술 이름보다, 왜 그렇게 설계했는지를 중심으로 설명해 보세요. 최소 권한 원칙, 접근 통제, 로깅 등 보안 설계의 관점이 담기면 강한 인상을 줄 수 있습니다.",
+      modelAnswer:
+        "<b>[첫 취업 준비생이라면?]</b><br> 학생 대상 설문 시스템을 만들면서, 이름과 이메일을 그대로 저장한 것이 개인정보 노출 위험이 크다는 피드백을 받았습니다.<br> 이후 이메일은 일부 마스킹 처리, 이름은 해시함수를 적용하여 저장 방식 자체를 바꿨습니다.<br> 처음엔 단순 저장만 고려했는데, 데이터 설계 자체에 보안 개념이 들어가야 함을 느꼈습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 회원 가입 및 주문 시스템 설계 시, 민감 데이터는 AES256으로 암호화하고, DB에는 접근 로깅을 남기도록 설정했습니다.<br> 또한 운영자 화면에서는 실명·연락처 정보를 마스킹 처리해 조회하도록 구성했고, 특정 권한 그룹에서만 접근 가능하도록 RBAC 기반 권한 제어를 적용했습니다.<br> 이후 개인정보보호 점검에서도 무이슈 통과 경험이 있습니다.",
+      days: 5,
+    },
+    {
+      id: "q18",
+      title: "퍼포먼스 모니터링",
+      content:
+        "프론트엔드 성능 병목을 진단하고 개선한 경험이 있다면, 어떤 도구를 사용했고 어떤 수치를 중심으로 개선했는지 설명해 주세요.",
+      date: "2025-04-15",
+      category: "Frontend",
+      hint: 'DevTools나 Lighthouse에서 어떤 수치를 보고 문제를 파악했는지, 그리고 개선 전후 어떤 변화가 있었는지를 명확히 설명해 보세요. 단순히 "느렸다 → 빨라졌다"보다는 병목 구간을 정확히 짚는 것이 중요합니다.',
+      modelAnswer:
+        "<b>[첫 취업 준비생이라면?]</b><br> React 기반 포트폴리오 사이트에서 초기 로딩 속도가 지나치게 느렸고, Lighthouse 분석 결과 이미지와 폰트 로딩이 병목 원인이었습니다.<br> 이미지에는 Lazy Loading을 적용하고, 웹폰트를 preload 처리하여 FCP를 2초에서 0.9초로 개선했습니다.<br> 이 과정에서 성능 지표를 수치로 보며 개선하는 재미를 처음 느꼈습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 내부 CRM 시스템에서 유저 전환 시 LCP 지연이 발생했으며, DevTools 성능 탭을 통해 Layout Shift와 JS 실행 시간이 문제임을 파악했습니다.<br> chunk 분리, 이미지 최적화, critical CSS 추출 등 다각적 개선을 통해 주요 지표가 30~40% 개선되었고, 사용자 불만도 확연히 줄었습니다.<br> 이후 New Relic과 연동하여 배포 후에도 실시간 성능 지표를 모니터링하고 있습니다.",
+      days: 5,
+    },
+    {
+      id: "q19",
+      title: "API 설계와 버전 관리 전략",
+      content:
+        "API를 설계하거나 운영하면서, 일관성을 유지하고 변경을 관리하기 위해 어떤 전략을 사용했는지 설명해 주세요. (버전 관리, 응답 포맷 설계, 호환성 유지 방식 등을 중심으로)",
+      date: "2025-04-15",
+      category: "Backend",
+      hint: '실무에서는 API가 한 번 공개되면 쉽게 바꿀 수 없습니다. 이 질문은 "처음부터 바뀔 수 있음을 고려하고 설계했는가"를 묻는 것입니다. URI 버전 관리, 응답 포맷 고정, Deprecation 정책 같은 구체적인 조치가 있다면 강력한 답변이 됩니다.',
+      modelAnswer:
+        "<b>[첫 취업 준비생이라면?]</b><br> 처음엔 기능만 되면 된다고 생각했는데, 프론트엔드 파트너가 다른 화면에서 재사용할 수 없다고 불편을 느끼는 걸 보고 설계가 중요하다는 걸 느꼈습니다.<br> 그 후에는 URI와 응답 포맷을 명확히 정의하고, 응답에 항상 status, message, data 필드를 고정해서 주도록 구조를 정리했습니다.<br> 추후에 기능이 추가될 때도 혼란 없이 API를 재사용할 수 있었고, 의도하지 않은 깨짐도 줄어들었습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> API 응답 포맷이 일관되지 않아 프론트와의 협업 효율이 떨어지는 문제가 반복됐습니다.<br> 이에 응답 구조를 JSON Schema 기반으로 명세화하고, Swagger 문서화와 함께 Lint를 통한 API 규칙 검사를 도입했습니다.<br> 또한 v1/v2로 URI 버전 관리 체계를 적용하고, Deprecation 시점과 호환 유지 기준을 문서로 정리해 신규 기능 도입 시 혼란을 최소화할 수 있었습니다.",
+      days: 5,
+    },
+    {
+      id: "q20",
+      title: "스트레스 관리 및 동기 부여",
+      content:
+        "업무나 프로젝트에서 높은 스트레스를 받았던 상황에서, 본인은 어떻게 동기를 유지하고 팀 사기를 관리했는지 경험을 공유해 주세요.",
+      date: "2025-04-15",
+      category: "인성",
+      hint: "이 질문은 지원자가 힘들었던 상황이 궁금한 게 아니라, 그 상황에서 어떤 태도나 루틴으로 회복했는지를 보고자 합니다. 개인 회고, 동료 격려, 팀 분위기 전환 등 구체적인 실천 방식이 있으면 좋습니다.",
+      modelAnswer:
+        "<b>[첫 취업 준비생이라면?]</b><br> 졸업작품과 취업 준비가 겹쳐서 체력적으로도 정신적으로도 지치는 시기가 있었습니다.<br> 스스로 동기부여를 유지하기 위해 매일 일정 끝에 소감 기록을 남겼고, 팀원들에게도 짧은 회고 타임을 제안했습니다.<br> 이를 통해 서로 격려하고 장점을 발견하는 분위기가 생기면서, 마감도 무사히 넘길 수 있었습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 1년간 긴 유지보수 업무가 이어지며 팀 전체 사기가 저하되던 시기가 있었습니다.<br> 작은 성공도 주간 회고에서 공유하고, '미니 챌린지'라는 이름으로 스스로 성장 주제를 정해 발표하는 시간을 만들었습니다.<br> 팀원들 사이에 다시 자율성과 성취감이 생기면서 분위기와 퍼포먼스가 함께 회복되었습니다.",
+      days: 5,
+    },
+  ]
+
+  const [questions, setQuestions] = useState<Question[]>(hardcodedQuestions)
+  const [filteredQuestions, setFilteredQuestions] = useState<Question[]>(hardcodedQuestions)
+  const [selectedCategory, setSelectedCategory] = useState("전체")
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
+  const [selectedQuestion, setSelectedQuestion] = useState<Question | null>(null)
+  const [publicAnswers, setPublicAnswers] = useState<Answer[]>([])
+  const [isLoadingAnswers, setIsLoadingAnswers] = useState(false)
+  const { user } = useAuth()
+  const userId = user?.userId
+  const [nextQuestionTime, setNextQuestionTime] = useState<string>("")
+  const [hasMarkedRead, setHasMarkedRead] = useState(false)
+  const [isDialogOpen, setIsDialogOpen] = useState(false)
+  const [showModelAnswer, setShowModelAnswer] = useState(false) // 모범 답변 토글 상태
+  const [canViewAnswer, setCanViewAnswer] = useState(false) // 모범 답변 볼 수 있는지 여부
+  const [timeRemaining, setTimeRemaining] = useState("") // 남은 시간
+
+  // 현재 날짜 기준으로 Day 계산 - 시간에 따라 Day 5 표시
+  const calculateDayCount = () => {
+    const now = new Date()
+
+    // 2025년 4월 11일 오전 9시 (Day 3 공개 시간)
+    const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 월은 0부터 시작하므로 4월은 3
+    // 2025년 4월 14일 오전 9시 (Day 4 공개 시간)
+    const day4ReleaseTime = new Date(2025, 3, 14, 9, 0, 0)
+    // 2025년 4월 15일 오전 9시 (Day 5 공개 시간)
+    const day5ReleaseTime = new Date(2025, 3, 15, 9, 0, 0)
+
+    if (now >= day5ReleaseTime) {
+      return 5 // Day 5 표시
+    } else if (now >= day4ReleaseTime) {
+      return 4 // Day 4 표시
+    } else if (now >= day3ReleaseTime) {
+      return 3 // Day 3 표시
+    }
+
+    return 2 // 그 전에는 Day 2 표시
+  }
+
+  // 현재 날짜 기준 Day 계산
+  const currentDay = calculateDayCount()
+
+  // 카테고리별 배지 색상 설정
+  const getBadgeClass = (category: string) => {
+    switch (category) {
+      case "Frontend":
+        return "bg-[#4A6EB0] hover:bg-[#4A6EB0]/90 text-white"
+      case "Backend":
+        return "bg-[#6B8E23] hover:bg-[#6B8E23]/90 text-white"
+      case "공통":
+        return "bg-[#9370DB] hover:bg-[#9370DB]/90 text-white"
+      case "인성":
+        return "bg-[#FF8C00] hover:bg-[#FF8C00]/90 text-white"
+      case "DevOps":
+        return "bg-[#5F9EA0] hover:bg-[#5F9EA0]/90 text-white"
+      case "Cloud":
+        return "bg-[#4682B4] hover:bg-[#4682B4]/90 text-white"
+      case "Data Engineering":
+        return "bg-[#8B4513] hover:bg-[#8B4513]/90 text-white"
+      case "프로세스":
+        return "bg-[#708090] hover:bg-[#708090]/90 text-white"
+      default:
+        return "bg-hanghae-light hover:bg-hanghae-light/90 text-hanghae-text"
+    }
+  }
+
+  // 날짜 포맷팅 함수 추가
+  const formatDate = (dateString: string) => {
+    try {
+      const date = new Date(dateString)
+      if (isNaN(date.getTime())) {
+        return "04/10" // 기본값 설정
+      }
+      const year = date.getFullYear().toString().slice(2)
+      const month = (date.getMonth() + 1).toString().padStart(2, "0")
+      const day = date.getDate().toString().padStart(2, "0")
+      return `${year}/${month}/${day}`
+    } catch (error) {
+      console.error("날짜 포맷팅 오류:", error)
+      return "04/10" // 오류 시 기본값
+    }
+  }
+
+  // 질문 필터링 함수 수정 - 카테고리별 필터링 유지 및 시간 기반 필터링 추가
+  const filterQuestions = (category) => {
+    setSelectedCategory(category)
+    setIsDropdownOpen(false)
+
+    // 현재 시간 확인
+    const now = new Date()
+    const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 2025년 4월 11일 오전 9시
+    const day4ReleaseTime = new Date(2025, 3, 14, 9, 0, 0) // 2025년 4월 14일 오전 9시
+    const day5ReleaseTime = new Date(2025, 3, 15, 9, 0, 0) // 2025년 4월 15일 오전 9시
+
+    // 시간 기반 필터링된 질문 목록
+    const timeFilteredQuestions = [...hardcodedQuestions].filter((q) => {
+      // Day 5 질문은 4월 15일 오전 9시 이후에만 표시
+      if (q.days === 5) {
+        return now >= day5ReleaseTime
+      }
+      // Day 4 질문은 4월 14일 오전 9시 이후에만 표시
+      if (q.days === 4) {
+        return now >= day4ReleaseTime
+      }
+      // Day 3 질문은 오전 9시 이후에만 표시
+      if (q.days === 3) {
+        return now >= day3ReleaseTime
+      }
+      return true // Day 1, 2 질문은 항상 표시
+    })
+
+    // 카테고리 필터링 적용
+    if (category === "전체") {
+      setFilteredQuestions(timeFilteredQuestions)
+    } else {
+      const filtered = timeFilteredQuestions.filter((q) => q.category === category)
+      setFilteredQuestions(filtered)
+    }
+  }
+
+  const fetchPublicAnswers = async (questionId: string) => {
+    setIsLoadingAnswers(true)
+    try {
+      const response = await fetch(`/api/answers?questionId=${questionId}&publicOnly=true`)
+      if (response.ok) {
+        const data = await response.json()
+        if (data.success && data.data) {
+          setPublicAnswers(data.data)
+        } else {
+          setPublicAnswers([])
+        }
+      } else {
+        setPublicAnswers([])
+      }
+    } catch (error) {
+      console.error("답변 가져오기 오류:", error)
+      setPublicAnswers([])
+    } finally {
+      setIsLoadingAnswers(false)
+    }
+  }
+
+  // 모범 답변 볼 수 있는지 확인하는 로직 수정
+  const handleQuestionClick = async (question: Question) => {
+    setSelectedQuestion(question)
+    setShowModelAnswer(false) // 모달 열릴 때 모범 답변 숨기기
+
+    // Day5 문제인지 확인하고 모범 답변 볼 수 있는지 체크
+    const isDay5Question = question.days === 5
+    const isDay4Question = question.days === 4
+    const isDay3Question = question.days === 3
+
+    if (isDay5Question) {
+      // Day5 질문은 저녁 8시 이후에만 볼 수 있음
+      setCanViewAnswer(canViewModelAnswer())
+    } else if (isDay4Question) {
+      // Day4 질문은 이미 어제 저녁 8시에 공개되었으므로 항상 볼 수 있음
+      setCanViewAnswer(true)
+    } else if (isDay3Question) {
+      // Day3 질문은 이미 어제 저녁 8시에 공개되었으므로 항상 볼 수 있음
+      setCanViewAnswer(true)
+    } else {
+      // Day1, Day2 문제는 저녁 8시 이후에만 볼 수 있음
+      setCanViewAnswer(canViewModelAnswer())
+    }
+
+    // Mark question as read only if it hasn't been marked as read before
+    if (userId && !hasMarkedRead) {
+      markQuestionAsRead(userId, question.id)
+      setHasMarkedRead(true) // Set the state to true after marking as read
+    }
+  }
+
+  // 남은 시간 계산 함수
+  const calculateTimeRemaining = () => {
+    const now = new Date()
+    const releaseHour = 20 // 저녁 8시
+
+    // 오늘 저녁 8시
+    const today8PM = new Date(now)
+    today8PM.setHours(releaseHour, 0, 0, 0)
+
+    if (now >= today8PM) {
+      setTimeRemaining("")
+      return "모범 답변이 공개되었습니다"
+    }
+
+    // 남은 시간 계산 (hh:mm:ss 형식)
+    const diffMs = today8PM.getTime() - now.getTime()
+    const hours = Math.floor(diffMs / (1000 * 60 * 60))
+    const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60))
+    const seconds = Math.floor((diffMs % (1000 * 60)) / 1000)
+
+    const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes.toString().padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`
+    setTimeRemaining(formattedTime)
+    return formattedTime
+  }
+
+  useEffect(() => {
+    if (selectedQuestion) {
+      fetchPublicAnswers(selectedQuestion.id)
+    }
+  }, [selectedQuestion])
+
+  // 시간 업데이트를 위한 타이머 설정 부분도 수정
+  useEffect(() => {
+    if (selectedQuestion?.days === 5) {
+      // Day5 문제인 경우에만 타이머 설정
+      calculateTimeRemaining()
+      const timer = setInterval(() => {
+        const remaining = calculateTimeRemaining()
+        if (remaining === "모범 답변이 공개되었습니다") {
+          setCanViewAnswer(true)
+          clearInterval(timer)
+        }
+      }, 1000)
+
+      return () => clearInterval(timer)
+    }
+  }, [selectedQuestion])
+
+  // 모든 카테고리 목록 업데이트 (Day 5 카테고리 추가)
+  const categories = ["전체", "Frontend", "Backend", "공통", "인성", "DevOps", "Cloud", "Data Engineering", "프로세스"]
+
+  // useEffect 내의 정렬 로직도 수정
+  useEffect(() => {
+    // 현재 시간 확인
+    const now = new Date()
+    const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 2025년 4월 11일 오전 9시
+    const day4ReleaseTime = new Date(2025, 3, 14, 9, 0, 0) // 2025년 4월 14일 오전 9시
+    const day5ReleaseTime = new Date(2025, 3, 15, 9, 0, 0) // 2025년 4월 15일 오전 9시
+
+    // 시간 기반 필터링
+    const timeFilteredQuestions = [...hardcodedQuestions].filter((q) => {
+      // Day 5 질문은 4월 15일 오전 9시 이후에만 표시
+      if (q.days === 5) {
+        return now >= day5ReleaseTime
+      }
+      // Day 4 질문은 4월 14일 오전 9시 이후에만 표시
+      if (q.days === 4) {
+        return now >= day4ReleaseTime
+      }
+      // Day 3 질문은 오전 9시 이후에만 표시
+      if (q.days === 3) {
+        return now >= day3ReleaseTime
+      }
+      return true // Day 1, 2 질문은 항상 표시
+    })
+
+    // 질문을 Day 기준으로 내림차순 정렬 (최신순)
+    const sortedQuestions = timeFilteredQuestions.sort((a, b) => {
+      // 먼저 Day로 내림차순 정렬
+      if (b.days !== a.days) {
+        return b.days - a.days
+      }
+      // Day가 같으면 ID로 정렬 (q1, q2, q2-1, q3, q3-1, q4 순서)
+      return a.id.localeCompare(b.id)
+    })
+
+    setQuestions(sortedQuestions)
+    setFilteredQuestions(sortedQuestions)
+  }, [])
+
+  // Add click-outside handler for dropdown
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      // Check if dropdown is open and the click is outside dropdown area
+      if (isDropdownOpen && event.target.closest("[data-dropdown-container]") === null) {
+        setIsDropdownOpen(false)
+      }
+    }
+
+    // Add event listener when dropdown is open
+    if (isDropdownOpen) {
+      document.addEventListener("mousedown", handleClickOutside)
+    }
+
+    // Clean up the event listener when dropdown closes or component unmounts
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside)
+    }
+  }, [isDropdownOpen])
+
+  return (
+    <PageLayout>
+      <div className="flex justify-between items-center mb-6">
+        <h1 className="text-2xl md:text-3xl font-bold text-hanghae-text">지난 면접 질문</h1>
+        <div className="relative" data-dropdown-container>
+          <Button
+            variant="outline"
+            className="flex items-center gap-2"
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          >
+            {selectedCategory}
+            <ChevronDown className="h-4 w-4" />
+          </Button>
+
+          {isDropdownOpen && (
+            <div className="absolute right-0 mt-2 w-48 bg-hanghae-gray border border-[#3a3e41] rounded-md shadow-lg z-10">
+              {categories.map((category) => (
+                <button
+                  key={category}
+                  className="block w-full text-left px-4 py-2 hover:bg-hanghae-light"
+                  onClick={() => filterQuestions(category)}
+                >
+                  {category}
+                </button>
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
+
+      <div className="space-y-4">
+        {filteredQuestions.map((question) => (
+          <Dialog
+            key={question.id}
+            open={isDialogOpen && selectedQuestion?.id === question.id}
+            onOpenChange={(open) => {
+              setIsDialogOpen(open)
+              if (open) {
+                setHasMarkedRead(false) // Reset the state when the dialog is opened
+                handleQuestionClick(question)
+              } else {
+                setSelectedQuestion(null)
+              }
+            }}
+          >
+            <DialogTrigger asChild>
+              <Card className="hover:bg-hanghae-light/50 transition-colors cursor-pointer border-[#3a3e41] border-[1px]">
+                <CardHeader className="pb-2">
+                  <div className="flex justify-between items-start">
+                    <CardTitle className="text-lg">{question.title}</CardTitle>
+                    <Badge className={getBadgeClass(question.category)}>{question.category}</Badge>
+                  </div>
+                  <div className="text-sm text-hanghae-text/70">
+                    Day {question.days} ({formatDate(question.date)})
+                  </div>
+                </CardHeader>
+                <CardContent className="pb-4">
+                  <p className="text-sm text-hanghae-text/70 line-clamp-2">{question.content}</p>
+                </CardContent>
+              </Card>
+            </DialogTrigger>
+            <DialogContent
+              className="max-w-3xl max-h-[80vh] overflow-y-auto overflow-x-hidden"
+              style={{ wordBreak: "break-all" }}
+            >
+              <DialogHeader>
+                <div className="flex justify-between items-center pr-8">
+                  <DialogTitle className="text-xl">{selectedQuestion?.title}</DialogTitle>
+                  <Badge className={selectedQuestion ? getBadgeClass(selectedQuestion.category) : ""}>
+                    {selectedQuestion?.category}
+                  </Badge>
+                </div>
+                <div className="text-sm text-hanghae-text/70">
+                  Day {selectedQuestion?.days} ({selectedQuestion ? formatDate(selectedQuestion.date) : ""})
+                </div>
+              </DialogHeader>
+              <div className="space-y-6 mt-4">
+                <div
+                  className="prose dark:prose-invert max-w-none text-hanghae-text break-words"
+                  style={{ wordBreak: "break-all" }}
+                >
+                  <p>{selectedQuestion?.content}</p>
+
+                  {selectedQuestion?.hint && (
+                    <div className="mt-4 p-4 bg-hanghae-light rounded-md">
+                      <h3 className="text-sm font-medium mb-1">힌트</h3>
+                      <p className="text-sm">{selectedQuestion.hint}</p>
+                    </div>
+                  )}
+                </div>
+
+                {/* 모범 답변 - 오늘의 문제는 시간에 따라 표시 */}
+                {selectedQuestion?.modelAnswer && (
+                  <div className="mt-6">
+                    <button
+                      onClick={() => canViewAnswer && setShowModelAnswer(!showModelAnswer)}
+                      className="flex items-center text-lg font-medium mb-3 w-full justify-between"
+                      disabled={!canViewAnswer}
+                    >
+                      <span>모범 답변</span>
+                      {selectedQuestion.days === 5 && !canViewAnswer ? (
+                        <div className="flex items-center text-sm text-hanghae-text/70">
+                          <Clock className="h-4 w-4 mr-1" />
+                          <span>{timeRemaining ? `${timeRemaining} 후 공개` : "저녁 8시에 공개됩니다"}</span>
+                        </div>
+                      ) : showModelAnswer ? (
+                        <ChevronUp className="h-5 w-5" />
+                      ) : (
+                        <ChevronRight className="h-5 w-5" />
+                      )}
+                    </button>
+                    {canViewAnswer && showModelAnswer && (
+                      <div
+                        className="bg-hanghae-light p-4 rounded-md break-words text-sm"
+                        dangerouslySetInnerHTML={{ __html: selectedQuestion.modelAnswer }}
+                      />
+                    )}
+                    {selectedQuestion.days === 5 && !canViewAnswer && (
+                      <div className="bg-hanghae-light p-4 rounded-md text-center text-hanghae-text/70">
+                        모범 답변은 저녁 8시에 공개됩니다.
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* 공개된 답변들 */}
+                <div className="mt-6">
+                  <h3 className="text-lg font-medium mb-3">공개된 답변 ({publicAnswers.length})</h3>
+                  {isLoadingAnswers ? (
+                    <div className="space-y-3">
+                      {[1, 2].map((i) => (
+                        <div key={i} className="bg-hanghae-light p-4 rounded-md animate-pulse">
+                          <div className="flex justify-between items-center mb-2">
+                            <div className="h-4 bg-hanghae-gray rounded w-24"></div>
+                            <div className="h-3 bg-hanghae-gray rounded w-32"></div>
+                          </div>
+                          <div className="h-16 bg-hanghae-gray rounded w-full"></div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : publicAnswers.length > 0 ? (
+                    <div className="space-y-3 max-h-[300px] overflow-y-auto">
+                      {publicAnswers.map((answer) => (
+                        <div key={answer.id} className="bg-hanghae-light p-4 rounded-md">
+                          <div className="mb-2">
+                            <span className="font-medium">{answer.nickname}</span>
+                          </div>
+                          <p className="text-sm whitespace-pre-wrap break-words">{answer.content}</p>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="bg-hanghae-light p-4 rounded-md">
+                      <p className="text-hanghae-text/70 text-center">아직 공개된 답변이 없습니다.</p>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </DialogContent>
+          </Dialog>
+        ))}
+      </div>
+    </PageLayout>
+  )
+}
