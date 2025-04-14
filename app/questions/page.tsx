@@ -581,7 +581,10 @@ export default function QuestionsPage() {
                 </CardContent>
               </Card>
             </DialogTrigger>
-            <DialogContent className="max-w-3xl max-h-[80vh] overflow-y-auto overflow-x-hidden">
+            <DialogContent
+              className="max-w-3xl max-h-[80vh] overflow-y-auto overflow-x-hidden"
+              style={{ wordBreak: "break-all" }}
+            >
               <DialogHeader>
                 <div className="flex justify-between items-center pr-8">
                   <DialogTitle className="text-xl">{selectedQuestion?.title}</DialogTitle>
@@ -594,7 +597,10 @@ export default function QuestionsPage() {
                 </div>
               </DialogHeader>
               <div className="space-y-6 mt-4">
-                <div className="prose dark:prose-invert max-w-none text-hanghae-text break-words">
+                <div
+                  className="prose dark:prose-invert max-w-none text-hanghae-text break-words"
+                  style={{ wordBreak: "break-all" }}
+                >
                   <p>{selectedQuestion?.content}</p>
 
                   {selectedQuestion?.hint && (
