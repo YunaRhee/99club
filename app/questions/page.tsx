@@ -181,12 +181,12 @@ export default function QuestionsPage() {
 
               <div className="mt-4">
                 <p className="text-sm text-hanghae-text/70 mb-2">{formatDateShort(selectedQuestion.date)}</p>
-                <p className="text-hanghae-text whitespace-pre-wrap">{selectedQuestion.content}</p>
+                <p className="text-hanghae-text whitespace-pre-wrap break-all">{selectedQuestion.content}</p>
 
                 {selectedQuestion.hint && (
                   <div className="mt-4 p-4 bg-hanghae-light rounded-md">
                     <h3 className="text-sm font-medium mb-1">힌트</h3>
-                    <p className="text-sm text-hanghae-text/70 whitespace-pre-wrap">{selectedQuestion.hint}</p>
+                    <p className="text-sm text-hanghae-text/70 whitespace-pre-wrap break-all">{selectedQuestion.hint}</p>
                   </div>
                 )}
               </div>
