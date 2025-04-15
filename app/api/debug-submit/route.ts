@@ -87,7 +87,7 @@ async function getGoogleAuth() {
   }
 }
 
-// 스프레드시트 구조 확인 및 생성 함수
+// 스프레드시트 구조 확인 및 생성 함���
 async function checkAndCreateSheet(sheets, spreadsheetId, sheetName) {
   try {
     // 스프레드시트 정보 가져오기

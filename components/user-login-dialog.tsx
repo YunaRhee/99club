@@ -63,7 +63,7 @@ export function UserLoginDialog() {
       }
 
       if (data.exists) {
-        // 이미 존재하는 사용자 - 로그인 처리
+        // 이미 ���재하는 사용자 - 로그인 처리
         const success = await login(nickname, phone, password)
         if (success) {
           setOpen(false)

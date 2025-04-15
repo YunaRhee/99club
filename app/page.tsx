@@ -11,7 +11,7 @@ import { Clock } from "lucide-react"
 import { getTimeRemainingForSubmission } from "@/lib/utils"
 
 export default function Home() {
-  // 하드코딩된 Day 2~5 질문들
+  // 하드코딩된 Day 2 질문들 - ID 형식 수정
   const hardcodedQuestions = {
     frontend: {
       id: "q6", // frontend Day 2 질문 ID
@@ -34,7 +34,7 @@ export default function Home() {
       category: "Backend",
       hint: "단일 DB 트랜잭션이 아닌, 서비스 간 데이터 일관성을 유지하는 방식을 고민해본 경험을 떠올려 보세요. (예: Eventual Consistency, 이벤트 기반 처리, SAGA 패턴 등)",
       modelAnswer:
-        "<b>[첫 취업 준비생이라면?]</b><br>\n토이 프로젝트에서 사용자 서비스와 결제 서비스를 나누어 구현했는데, 결제 완료 후 사용자 상태를 업데이트하는 로직이 REST API 방식의 동기 호출되다 보니 결제 실패 시 사용자 상태가 잘못 변경되는 문제가 있었습니다.\n이를 해결하기 위해 RabbitMQ를 도입해 결제 완료 시 이벤트 메시지를 발행하고, 사용자 서비스가 이를 구독해 상태를 변경하도록 했습니다.\n비록 작은 프로젝트였지만, 서비스 간의 의존도를 줄이고 일관된 흐름을 유지하기 위해 비동기 메시징이 필요하다는 것을 체감할 수 있었습니다.\n<br><br>\n<b>[현직 개발자로, 이직 면접이라면?]</b><br>\n커머스 시스템에서 주문, 결제, 배송 서비스를 마이크로서비스로 분리한 이후, 주문 생성 후 결제 실패 시 데이터 정합성 이슈가 발생했습니다.\n이를 해결하기 위해 SAGA 패턴을 기반으로 한 이벤트 드리븐 구조를 도입했고, Kafka를 이벤트 브로커로 사용해 서비스 간 데이터를 전달했습니다.\n실패 시 보상 트랜잭션을 통해 이전 상태로 복구하는 로직을 각 서비스에 구현했으며, idempotent key 처리, DLQ 설계 등도 함께 적용해 ���정성을 높였습니다.\n결과적으로 연관 서비스 간 장애 전파율이 줄고 유지보수 비용도 감소했습니다.",
+        "<b>[첫 취업 준비생이라면?]</b><br>\n토이 프로젝트에서 사용자 서비스와 결제 서비스를 나누어 구현했는데, 결제 완료 후 사용자 상태를 업데이트하는 로직이 REST API 방식의 동기 호출되다 보니 결제 실패 시 사용자 상태가 잘못 변경되는 문제가 있었습니다.\n이를 해결하기 위해 RabbitMQ를 도입해 결제 완료 시 이벤트 메시지를 발행하고, 사용자 서비스가 이를 구독해 상태를 변경하도록 했습니다.\n비록 작은 프로젝트였지만, 서비스 간의 의존도를 줄이고 일관된 흐름을 유지하기 위해 비동기 메시징이 필요하다는 것을 체감할 수 있었습니다.\n<br><br>\n<b>[현직 개발자로, 이직 면접이라면?]</b><br>\n커머스 시스템에서 주문, 결제, 배송 서비스를 마이크로서비스로 분리한 이후, 주문 생성 후 결제 실패 시 데이터 정합성 이슈가 발생했습니다.\n이를 해결하기 위해 SAGA 패턴을 기반으로 한 이벤트 드리븐 구조를 도입했고, Kafka를 이벤트 브로커로 사용해 서비스 간 데이터를 전달했습니다.\n실패 시 보상 트랜잭션을 통해 이전 상태로 복구하는 로직을 각 서비스에 구현했으며, idempotent key 처리, DLQ 설계 등도 함께 적용해 안정성을 높였습니다.\n결과적으로 연관 서비스 간 장애 전파율이 줄고 유지보수 비용도 감소했습니다.",
       days: 2,
     },
     common: {
@@ -83,7 +83,7 @@ export default function Home() {
       category: "공통",
       hint: "기술 부채는 빠른 개발을 위해 나중에 갚기로 한 '빚' 같은 기술적 타협을 말하며, 코드 중복, 테스트 누락, 문서화 부족 등도 포함됩니다. 기술 부채에 대한 정량화 기준(예: PR backlog, 테스트 커버리지 등), 대응 방식(Refactor Sprint, 주간 점검 등)을 중심으로 답변해 보세요.",
       modelAnswer:
-        "<b>[첫 취업 준비생이라면?]</b><br>팀 프로젝트에서 일정이 촉박해 공통 컴포넌트를 빠르게 하드코딩 방식으로 처리한 적이 있습니다.<br>나중에는 같은 컴포넌트에 반복적으로 수정이 들어가면서 유지보수가 어려워졌고, 이걸 계기로 리팩토링 전용 스프린트를 따로 만들었습니다.<br>기능과 속도만 보던 초반과 달리, 이후엔 기술 부채도 하나의 '관리 대상'으로 인식하게 되었고, 지금은 설계 단계에서부터 중복과 확장 가능성을 의식하려 노력하고 있습니다.<br><br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br>사내 ���로젝트에서 테스트 커버리지 부족, 중복 로직, 복잡한 조건문이 점점 쌓이면서 개발 속도도 떨어지고 버그 빈도가 높아졌습니다.<br>이를 해결하기 위해 기술 부채 점검 기준을 팀 차원에서 정리하고, 매 스프린트마다 일정 비율로 리팩토링 태스크를 포함했습니다.",
+        "<b>[첫 취업 준비생이라면?]</b><br>팀 프로젝트에서 일정이 촉박해 공통 컴포넌트를 빠르게 하드코딩 방식으로 처리한 적이 있습니다.<br>나중에는 같은 컴포넌트에 반복적으로 수정이 들어가면서 유지보수가 어려워졌고, 이걸 계기로 리팩토링 전용 스프린트를 따로 만들었습니다.<br>기능과 속도만 보던 초반과 달리, 이후엔 기술 부채도 하나의 '관리 대상'으로 인식하게 되었고, 지금은 설계 단계에서부터 중복과 확장 가능성을 의식하려 노력하고 있습니다.<br><br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br>사내 프로젝트에서 테스트 커버리지 부족, 중복 로직, 복잡한 조건문이 점점 쌓이면서 개발 속도도 떨어지고 버그 빈도가 높아졌습니다.<br>이를 해결하기 위해 기술 부채 점검 기준을 팀 차원에서 정리하고, 매 스프린트마다 일정 비율로 리팩토링 태스크를 포함했습니다.",
       days: 3,
     },
     q11: {
@@ -159,7 +159,6 @@ export default function Home() {
         "<b>[첫 취업 준비생이라면?]</b><br> 팀 프로젝트에서 일정이 자꾸 밀려 팀 분위기가 가라앉은 상황이 있었습니다.<br> 제가 먼저 팀원들과 일정을 다시 정리하고 우선순위를 조정해 '작동하는 기능부터 완성하자'는 MVP 전략을 제안했습니다.<br> 이후 팀원 간 협업이 원활해졌고 프로젝트도 제시간에 마무리할 수 있었습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 신규 기능 런칭 프로젝트에서 PO가 중간 이탈해 일정이 크게 흔들린 적이 있습니다.<br> PM 부재 상태에서 주도적으로 요구사항 정리, 스프린트 재계획, QA 체크리스트 작성 등을 리드했고, 릴리즈를 무사히 완료했습니다.<br> 이후 회고에서 해당 경험이 계기가 되어 팀 내 기술 PM 역할을 제안받기도 했습니다.",
       days: 4,
     },
-    // Day 5 질문들 추가
     q17: {
       id: "q17",
       title: "데이터 보안 설계",
@@ -179,7 +178,7 @@ export default function Home() {
         "프론트엔드 성능 병목을 진단하고 개선한 경험이 있다면, 어떤 도구를 사용했고 어떤 수치를 중심으로 개선했는지 설명해 주세요.",
       date: "2025-04-15",
       category: "Frontend",
-      hint: 'DevTools나 Lighthouse에서 어떤 수치를 보고 문제를 파악했는지, 그리고 개선 전후 어떤 변화가 있었는지를 명확히 설명해 보세요. 단순히 "느렸다 → 빨라졌다"보다는 병목 구간을 정확히 짚는 것이 중요합니다.',
+      hint: "DevTools나 Lighthouse에서 어떤 수치를 보고 문제를 파악했는지, 그리고 개선 전후 어떤 변화가 있었는지를 명확히 설명해 보세요. 단순히 “느렸다 → 빨라졌다”보다는 병목 구간을 정확히 짚는 것이 중요합니다.",
       modelAnswer:
         "<b>[첫 취업 준비생이라면?]</b><br> React 기반 포트폴리오 사이트에서 초기 로딩 속도가 지나치게 느렸고, Lighthouse 분석 결과 이미지와 폰트 로딩이 병목 원인이었습니다.<br> 이미지에는 Lazy Loading을 적용하고, 웹폰트를 preload 처리하여 FCP를 2초에서 0.9초로 개선했습니다.<br> 이 과정에서 성능 지표를 수치로 보며 개선하는 재미를 처음 느꼈습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 내부 CRM 시스템에서 유저 전환 시 LCP 지연이 발생했으며, DevTools 성능 탭을 통해 Layout Shift와 JS 실행 시간이 문제임을 파악했습니다.<br> chunk 분리, 이미지 최적화, critical CSS 추출 등 다각적 개선을 통해 주요 지표가 30~40% 개선되었고, 사용자 불만도 확연히 줄었습니다.<br> 이후 New Relic과 연동하여 배포 후에도 실시간 성능 지표를 모니터링하고 있습니다.",
       days: 5,
@@ -191,7 +190,7 @@ export default function Home() {
         "API를 설계하거나 운영하면서, 일관성을 유지하고 변경을 관리하기 위해 어떤 전략을 사용했는지 설명해 주세요. (버전 관리, 응답 포맷 설계, 호환성 유지 방식 등을 중심으로)",
       date: "2025-04-15",
       category: "Backend",
-      hint: '실무에서는 API가 한 번 공개되면 쉽게 바꿀 수 없습니다. 이 질문은 "처음부터 바뀔 수 있음을 고려하고 설계했는가"를 묻는 것입니다. URI 버전 관리, 응답 포맷 고정, Deprecation 정책 같은 구체적인 조치가 있다면 강력한 답변이 됩니다.',
+      hint: "실무에서는 API가 한 번 공개되면 쉽게 바꿀 수 없습니다. 이 질문은 “처음부터 바뀔 수 있음을 고려하고 설계했는가”를 묻는 것입니다. URI 버전 관리, 응답 포맷 고정, Deprecation 정책 같은 구체적인 조치가 있다면 강력한 답변이 됩니다.",
       modelAnswer:
         "<b>[첫 취업 준비생이라면?]</b><br> 처음엔 기능만 되면 된다고 생각했는데, 프론트엔드 파트너가 다른 화면에서 재사용할 수 없다고 불편을 느끼는 걸 보고 설계가 중요하다는 걸 느꼈습니다.<br> 그 후에는 URI와 응답 포맷을 명확히 정의하고, 응답에 항상 status, message, data 필드를 고정해서 주도록 구조를 정리했습니다.<br> 추후에 기능이 추가될 때도 혼란 없이 API를 재사용할 수 있었고, 의도하지 않은 깨짐도 줄어들었습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> API 응답 포맷이 일관되지 않아 프론트와의 협업 효율이 떨어지는 문제가 반복됐습니다.<br> 이에 응답 구조를 JSON Schema 기반으로 명세화하고, Swagger 문서화와 함께 Lint를 통한 API 규칙 검사를 도입했습니다.<br> 또한 v1/v2로 URI 버전 관리 체계를 적용하고, Deprecation 시점과 호환 유지 기준을 문서로 정리해 신규 기능 도입 시 혼란을 최소화할 수 있었습니다.",
       days: 5,
@@ -208,9 +207,57 @@ export default function Home() {
         "<b>[첫 취업 준비생이라면?]</b><br> 졸업작품과 취업 준비가 겹쳐서 체력적으로도 정신적으로도 지치는 시기가 있었습니다.<br> 스스로 동기부여를 유지하기 위해 매일 일정 끝에 소감 기록을 남겼고, 팀원들에게도 짧은 회고 타임을 제안했습니다.<br> 이를 통해 서로 격려하고 장점을 발견하는 분위기가 생기면서, 마감도 무사히 넘길 수 있었습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 1년간 긴 유지보수 업무가 이어지며 팀 전체 사기가 저하되던 시기가 있었습니다.<br> 작은 성공도 주간 회고에서 공유하고, '미니 챌린지'라는 이름으로 스스로 성장 주제를 정해 발표하는 시간을 만들었습니다.<br> 팀원들 사이에 다시 자율성과 성취감이 생기면서 분위기와 퍼포먼스가 함께 회복되었습니다.",
       days: 5,
     },
+    q21: {
+      id: "q21",
+      title: "코드 리뷰와 테스트 자동화",
+      content:
+        "코드 리뷰와 테스트 자동화를 도입하거나 개선하여 개발 흐름이나 품질에 기여한 경험이 있다면 구체적으로 공유해 주세요.",
+      date: "2025-04-16",
+      category: "공통",
+      hint: "도입 계기, 팀원과의 협업 방식, 퀄리티 향상 등의 구체적 변화가 드러나야 좋은 답변이 됩니다. (예: PR 템플릿, 리뷰 기준 정립, 테스트 커버리지 도입, 린트 자동화 등)",
+      modelAnswer:
+        "<b>[첫 취업 준비생이라면?]</b><br> 팀 프로젝트에서 코드 스타일이 들쭉날쭉했고, 리뷰도 감으로 진행되던 상황이 있었습니다.<br> eslint와 prettier를 도입하고, PR 작성 시 체크리스트를 추가해 코드 리뷰의 기준을 명확히 했습니다.<br> 간단한 unit test도 작성하게 되면서 코드에 대한 신뢰도와 자신감이 함께 높아졌습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 기존 팀은 QA 인력이 없이 개발자가 전담 테스트하던 구조였고, 반복 테스트 부담이 컸습니다.<br> CI 파이프라인에 jest + testing-library 기반 테스트 자동화를 추가하고, GitHub Actions로 커버리지 리포트를 생성했습니다.<br> 결과적으로 기능 릴리스 주기가 2배 이상 빨라졌고, 신입 개발자도 테스트 기준을 빠르게 익힐 수 있었습니다.",
+      days: 6,
+    },
+    q22: {
+      id: "q22",
+      title: "컴포넌트 설계 원칙",
+      content:
+        "컴포넌트를 설계할 때 재사용성과 유지보수성을 높이기 위해 어떤 원칙을 적용했는지, 실제 사례와 함께 설명해 주세요.",
+      date: "2025-04-16",
+      category: "Frontend",
+      hint: "재사용성은 단순히 나누었다가 아니라, 역할 분리와 데이터 흐름을 고민했는지에 달려 있습니다. Atomic Design, Container/Presentational 구조, props 최소화 등의 실천이 구체적으로 드러나면 좋습니다.",
+      modelAnswer:
+        "<b>[첫 취업 준비생이라면?]</b><br> React 프로젝트에서 UI 요소가 점점 중복되자, 공통 UI를 Atomic Design 기준으로 재설계한 경험이 있습니다.<br> Button, Modal, Card 같은 컴포넌트를 각각의 관심사에 따라 분리하고, props를 엄격히 관리해 재사용성을 높였습니다.<br> 이후 기능 추가 시 중복 없이 빠르게 적용할 수 있었고, 팀원들과의 협업 속도도 개선되었습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br>디자인 시스템을 도입하면서 공통 UI 컴포넌트를 Atomic Design 패턴에 따라 재구성했습니다.<br>또한 로직이 섞이지 않도록 Presentation-Container 구조로 나누고, props를 최소화하고 기본값을 명시하는 방식으로 유지보수성을 확보했습니다.<br>이후 팀 신규 기능 개발 속도가 약 30% 향상되었고, 테스트도 훨씬 수월해졌습니다.",
+      days: 6,
+    },
+    q23: {
+      id: "q23",
+      title: "장애 대응 및 복구 전략",
+      content:
+        "시스템 장애 발생 시 신속하게 대응하고 복구하기 위해 어떤 전략을 수립하고 적용했는지 구체적으로 설명해 주세요.",
+      date: "2025-04-16",
+      category: "Backend",
+      hint: "장애 탐지, 알림 시스템, 롤백 전략, 재시도 메커니즘 등의 구체적인 대응 방식을 중심으로 설명해 주세요.",
+      modelAnswer:
+        "<b>[첫 취업 준비생이라면?]</b><br> 개인 프로젝트에서 외부 API 호출 실패로 인해 서비스가 중단되는 문제를 경험했습니다. 이를 해결하기 위해 재시도 로직과 타임아웃 설정을 추가하고, 장애 발생 시 사용자에게 적절한 안내 메시지를 제공하는 방식으로 개선했습니다. 이러한 경험을 통해 장애 대응의 중요성을 체감할 수 있었습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 결제 시스템에서 간헐적인 장애가 발생하여, 장애 탐지 및 대응 체계를 구축했습니다. Prometheus와 Grafana를 활용한 모니터링 시스템을 도입하고, 장애 발생 시 Slack을 통한 실시간 알림을 설정했습니다. 또한, 롤백 전략과 재시도 메커니즘을 구현하여 서비스의 안정성을 확보했습니다.",
+      days: 6,
+    },
+    q24: {
+      id: "q24",
+      title: "개발 외의 관심사",
+      content:
+        "개발을 제외하고, 요즘 본인이 가장 중요하게 생각하거나 고민하고 있는 주제가 있다면 무엇인지 공유해 주세요.",
+      date: "2025-04-16",
+      category: "인성",
+      hint: "기술적인 이야기에서 잠시 벗어나, 지원자의 사고방식, 가치관, 현재의 관심사를 묻는 질문입니다. 꼭 멋진 답이 아니어도 좋습니다. 다만 ‘왜 그걸 중요하게 생각하는지’가 드러나는 게 핵심입니다.",
+      modelAnswer:
+        "<b>[첫 취업 준비생이라면?]</b><br> 요즘은 “협업을 잘하려면 뭘 먼저 신경 써야 할까?”를 자주 고민하고 있어요.<br> 혼자 공부할 땐 기술이 전부라고 생각했는데, 프로젝트를 해보니 커뮤니케이션 실수 하나가 전체 일정에 영향을 주더라고요.<br> 그래서 말 습관이나 회의 정리 같은 것도 연습 중입니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 최근에는 “내가 일하는 방식이 얼마나 지속 가능한가?”를 많이 고민하고 있습니다.<br> 빠르게 일하는 것도 좋지만, 무리하거나 지치면 결국 퍼포먼스가 떨어지더라고요.<br> 그래서 회고 습관, 일정 관리 도구 활용 등 ‘꾸준한 일’을 만드는 연습을 하고 있습니다.",
+      days: 6,
+    },
   }
 
-  // 현재 날짜 기준으로 Day 계산 - Day 5는 2025년 4월 15일 오전 9시 이후에 공개
+  // 현재 날짜 기준으로 Day 계산 - Day 4는 2025년 4월 14일 오전 9시 이후에 공개
   const calculateDayCount = () => {
     const now = new Date()
 
@@ -220,19 +267,23 @@ export default function Home() {
     const day4ReleaseTime = new Date(2025, 3, 14, 9, 0, 0)
     // 2025년 4월 15일 오전 9시 (Day 5 공개 시간)
     const day5ReleaseTime = new Date(2025, 3, 15, 9, 0, 0)
+    // 2025년 4월 16일 오전 9시 (Day 5 공개 시간)
+    const day6ReleaseTime = new Date(2025, 3, 16, 9, 0, 0)
 
-    if (now >= day5ReleaseTime) {
-      return 5 // Day 5 공개됨
+    if (now >= day6ReleaseTime) {
+      return 6; // Day 5 공개됨
+    } else if (now >= day5ReleaseTime) {
+      return 5; // Day 4 공개됨
     } else if (now >= day4ReleaseTime) {
-      return 4 // Day 4 공개됨
+      return 4; // Day 3 공개됨
     } else if (now >= day3ReleaseTime) {
-      return 3 // Day 3 공개됨
-    }
+      return 3; // Day 3 공개됨
+    } 
+    return 2; // 그 전에는 Day 2
 
-    return 2 // 그 전에는 Day 2
   }
 
-  // 현재 날짜 기준 Day 계산
+  // 현재 날짜 기준 Day 계산 - 항상 2 반환
   const dayCount = calculateDayCount()
 
   // 카테고리별 질문 확인 상태 관리
@@ -256,7 +307,18 @@ export default function Home() {
     const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 2025년 4월 11일 오전 9시
     const day4ReleaseTime = new Date(2025, 3, 14, 9, 0, 0) // 2025년 4월 14일 오전 9시
     const day5ReleaseTime = new Date(2025, 3, 15, 9, 0, 0) // 2025년 4월 15일 오전 9시
+    const day6ReleaseTime = new Date(2025, 3, 16, 9, 0, 0) // 2025년 4월 15일 오전 9시
 
+    // Day 5 공개 시간이 되었는지 확인
+    if (now >= day6ReleaseTime) {
+      // Day 5 질문 표시
+      return {
+        frontend: hardcodedQuestions.q21, // Day 5 Frontend 질문
+        backend: hardcodedQuestions.q22, // Day 5 Backend 질문
+        common: hardcodedQuestions.q23, // Day 5 공통 질문
+        personality: hardcodedQuestions.q24, // Day 5 인성 질문
+      }
+    }
     // Day 5 공개 시간이 되었는지 확인
     if (now >= day5ReleaseTime) {
       // Day 5 질문 표시
@@ -268,7 +330,7 @@ export default function Home() {
       }
     }
     // Day 4 공개 시간이 되었는지 확인
-    else if (now >= day4ReleaseTime) {
+    if (now >= day4ReleaseTime) {
       // Day 4 질문 표시
       return {
         frontend: hardcodedQuestions.q14, // Day 4 Frontend 질문
@@ -465,7 +527,9 @@ export default function Home() {
           {questions.frontend ? (
             <QuestionCard question={questions.frontend} category="Frontend" onConfirmRead={handleQuestionConfirmed} />
           ) : (
-            <div className="p-4 bg-hanghae-gray rounded-md text-gray-400">질문이 없습니다.</div>
+            <div className="p-4 bg-hanghae-gray rounded-md text-hanghae-text border-[#3a3e41] border-[1px]">
+              오늘의 Frontend 질문이 준비되지 않았습니다.
+            </div>
           )}
         </TabsContent>
 
@@ -473,7 +537,9 @@ export default function Home() {
           {questions.backend ? (
             <QuestionCard question={questions.backend} category="Backend" onConfirmRead={handleQuestionConfirmed} />
           ) : (
-            <div className="p-4 bg-hanghae-gray rounded-md text-gray-400">질문이 없습니다.</div>
+            <div className="p-4 bg-hanghae-gray rounded-md text-hanghae-text border-[#3a3e41] border-[1px]">
+              오늘의 Backend 질문이 준비되지 않았습니다.
+            </div>
           )}
         </TabsContent>
 
@@ -481,7 +547,9 @@ export default function Home() {
           {questions.common ? (
             <QuestionCard question={questions.common} category="공통" onConfirmRead={handleQuestionConfirmed} />
           ) : (
-            <div className="p-4 bg-hanghae-gray rounded-md text-gray-400">질문이 없습니다.</div>
+            <div className="p-4 bg-hanghae-gray rounded-md text-hanghae-text border-[#3a3e41] border-[1px]">
+              오늘의 공통 질문이 준비되지 않았습니다.
+            </div>
           )}
         </TabsContent>
 
@@ -489,25 +557,35 @@ export default function Home() {
           {questions.personality ? (
             <QuestionCard question={questions.personality} category="인성" onConfirmRead={handleQuestionConfirmed} />
           ) : (
-            <div className="p-4 bg-hanghae-gray rounded-md text-gray-400">질문이 없습니다.</div>
+            <div className="p-4 bg-hanghae-gray rounded-md text-hanghae-text border-[#3a3e41] border-[1px]">
+              오늘의 인성 질문이 준비되지 않았습니다.
+            </div>
           )}
         </TabsContent>
       </Tabs>
 
-      {/* Replace the grid layout with vertical stacking */}
-      <div className="space-y-6">
-        <div>
+      {/* 답변 작성하기 폼 - 해당 카테고리 질문이 확인된 경우에만 표시 */}
+      {confirmedCategories[activeTab] && (
+        <div className="mt-8">
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="text-xl font-bold text-hanghae-text">답변 작성하기</h2>
+            <div className="flex items-center text-main-red font-bold">
+              <Clock className="h-4 w-4 mr-1" />
+              <span className="text-sm">인증 마감까지</span>
+              <span className="ml-2">{timeRemaining}</span>
+            </div>
+          </div>
           <AnswerForm questionId={getCurrentQuestionId()} category={getCurrentCategory()} />
         </div>
+      )}
 
-        <div>
-          <div className="flex items-center space-x-2 mb-2">
-            <Clock className="h-4 w-4 text-gray-500" />
-            <p className="text-sm text-gray-500">다음 질문까지 남은 시간: {timeRemaining}</p>
-          </div>
-          <ModelAnswer modelAnswer={questions[activeTab]?.modelAnswer} questionDay={questions[activeTab]?.days} />
-        </div>
-      </div>
+      {/* 모범 답안 - 항상 표시 */}
+      {questions[activeTab] && (
+        <ModelAnswer
+          modelAnswer={questions[activeTab].modelAnswer || ""}
+          questionDay={questions[activeTab].days || 1}
+        />
+      )}
     </PageLayout>
   )
 }
