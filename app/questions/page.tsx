@@ -331,11 +331,11 @@ export default function QuestionsPage() {
     const now = new Date()
 
     // 2025년 4월 11일 오전 9시 (Day 3 공개 시간)
-    const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 월은 0부터 시작하므로 4월은 3
+    const day5ReleaseTime = new Date(2025, 3, 15, 9, 0, 0) // 월은 0부터 시작하므로 4월은 3
 
     // 현재 시간이 2025년 4월 11일 오전 9시 이후인지 확인
-    if (now >= day3ReleaseTime) {
-      return 3 // Day 3 표시
+    if (now >= day5ReleaseTime) {
+      return 5 // Day 3 표시
     }
 
     return 2 // 그 전에는 Day 2 표시
@@ -384,13 +384,13 @@ export default function QuestionsPage() {
 
     // 현재 시간 확인
     const now = new Date()
-    const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 2025년 4월 11일 오전 9시
+    const day5ReleaseTime = new Date(2025, 3, 15, 9, 0, 0) // 2025년 4월 11일 오전 9시
 
     // 시간 기반 필터링된 질문 목록
     const timeFilteredQuestions = [...hardcodedQuestions].filter((q) => {
       // Day 3 질문은 오전 9시 이후에만 표시
-      if (q.days === 3) {
-        return now >= day3ReleaseTime
+      if (q.days === 5) {
+        return now >= day5ReleaseTime
       }
       return true // Day 1, 2 질문은 항상 표시
     })
@@ -432,8 +432,8 @@ export default function QuestionsPage() {
     setShowModelAnswer(false) // 모달 열릴 때 모범 답변 숨기기
 
     // Day3 문제인지 확인하고 모범 답변 볼 수 있는지 체크
-    const isDay3Question = question.days === 3
-    if (isDay3Question) {
+    const isDay5Question = question.days === 5
+    if (isDay5Question) {
       // Day3 질문은 이미 어제 저녁 8시에 공개되었으므로 항상 볼 수 있음
       setCanViewAnswer(true)
     } else {
@@ -481,7 +481,7 @@ export default function QuestionsPage() {
 
   // 시간 업데이트를 위한 타이머 설정 부분도 수정
   useEffect(() => {
-    if (selectedQuestion?.days === 3) {
+    if (selectedQuestion?.days === 5) {
       // Day3 문제인 경우에만 타이머 설정
       calculateTimeRemaining()
       const timer = setInterval(() => {
@@ -502,13 +502,13 @@ export default function QuestionsPage() {
   useEffect(() => {
     // 현재 시간 확인
     const now = new Date()
-    const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 2025년 4월 11일 오전 9시
+    const day5ReleaseTime = new Date(2025, 3, 15, 9, 0, 0) // 2025년 4월 11일 오전 9시
 
     // 시간 기반 필터링
     const timeFilteredQuestions = [...hardcodedQuestions].filter((q) => {
       // Day 3 질문은 오전 9시 이후에만 표시
-      if (q.days === 3) {
-        return now >= day3ReleaseTime
+      if (q.days === 5) {
+        return now >= day5ReleaseTime
       }
       return true // Day 1, 2 질문은 항상 표시
     })
