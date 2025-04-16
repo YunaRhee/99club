@@ -13,16 +13,27 @@ export function getDayCount(): number {
 
   // 2025년 4월 11일 오전 9시 (Day 3 공개 시간)
   const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 월은 0부터 시작하므로 4월은 3
-  // 2025년 4월 14일 오전 9시 (Day 4 공개 시간)
   const day4ReleaseTime = new Date(2025, 3, 14, 9, 0, 0)
-  // 2025년 4월 15일 오전 9시 (Day 5 공개 시간)
   const day5ReleaseTime = new Date(2025, 3, 15, 9, 0, 0)
-  // 2025년 4월 15일 오전 9시 (Day 5 공개 시간)
   const day6ReleaseTime = new Date(2025, 3, 16, 9, 0, 0)
-
-  // 현재 시간이 2025년 4월 15일 오전 9시 이후인지 확인
+  const day7ReleaseTime = new Date(2025, 3, 17, 9, 0, 0)
+  const day8ReleaseTime = new Date(2025, 3, 18, 9, 0, 0)
+  const day9ReleaseTime = new Date(2025, 3, 21, 9, 0, 0)
+  const day10ReleaseTime = new Date(2025, 3, 22, 9, 0, 0)
+  if (now >= day10ReleaseTime) {
+    return 10
+  }
+  if (now >= day9ReleaseTime) {
+    return 9
+  }
+  if (now >= day8ReleaseTime) {
+    return 8
+  }
+  if (now >= day7ReleaseTime) {
+    return 7
+  }
   if (now >= day6ReleaseTime) {
-    return 6 // Day 5 표시
+    return 6
   }
   // 현재 시간이 2025년 4월 15일 오전 9시 이후인지 확인
   if (now >= day5ReleaseTime) {
@@ -53,11 +64,26 @@ export function calculateDayNumber(dateString: string): number {
   const day5ReleaseTime = new Date(2025, 3, 15, 9, 0, 0)
   // 2025년 4월 15일 오전 9시 (Day 5 공개 시간)
   const day6ReleaseTime = new Date(2025, 3, 16, 9, 0, 0)
-  // 현재 시간이 2025년 4월 15일 오전 9시 이후이고, 날짜가 4월 15일이면 Day 5
+  const day7ReleaseTime = new Date(2025, 3, 17, 9, 0, 0)
+  const day8ReleaseTime = new Date(2025, 3, 18, 9, 0, 0)
+  const day9ReleaseTime = new Date(2025, 3, 21, 9, 0, 0)
+  const day10ReleaseTime = new Date(2025, 3, 22, 9, 0, 0)
+  // 현재 시간이 2025년 4월 15일 오전 9시 이후이고, 날짜가 4월 15일이면 Day 
+  if (now >= day10ReleaseTime && date.getDate() === 22 && date.getMonth() === 3 && date.getFullYear() === 2025) {
+    return 10
+  }
+  if (now >= day9ReleaseTime && date.getDate() === 21 && date.getMonth() === 3 && date.getFullYear() === 2025) {
+    return 9
+  }
+  if (now >= day8ReleaseTime && date.getDate() === 18 && date.getMonth() === 3 && date.getFullYear() === 2025) {
+    return 8
+  }
+  if (now >= day7ReleaseTime && date.getDate() === 17 && date.getMonth() === 3 && date.getFullYear() === 2025) {
+    return 7
+  }
   if (now >= day6ReleaseTime && date.getDate() === 16 && date.getMonth() === 3 && date.getFullYear() === 2025) {
     return 6
   }
-  // 현재 시간이 2025년 4월 14일 오전 9시 이후이고, 날짜가 4월 14일이면 Day 4
   if (now >= day5ReleaseTime && date.getDate() === 15 && date.getMonth() === 3 && date.getFullYear() === 2025) {
     return 5
   }
@@ -65,22 +91,18 @@ export function calculateDayNumber(dateString: string): number {
   if (now >= day4ReleaseTime && date.getDate() === 14 && date.getMonth() === 3 && date.getFullYear() === 2025) {
     return 4
   }
-
   // 현재 시간이 2025년 4월 11일 오전 9시 이후이고, 날짜가 4월 11일이면 Day 3
   if (now >= day3ReleaseTime && date.getDate() === 11 && date.getMonth() === 3 && date.getFullYear() === 2025) {
     return 3
   }
-
   // 날짜가 4월 10일이면 Day 2
   if (date.getDate() === 10 && date.getMonth() === 3 && date.getFullYear() === 2025) {
     return 2
   }
-
   // 날짜가 4월 9일이면 Day 1
   if (date.getDate() === 9 && date.getMonth() === 3 && date.getFullYear() === 2025) {
     return 1
   }
-
   return 2 // 기본값
 }
 
@@ -102,7 +124,6 @@ export function formatDateTime(dateString: string): string {
 
     // KST로 변환 (UTC+9)
     const kstDate = new Date(date.getTime() + 9 * 60 * 60 * 1000)
-
     const year = kstDate.getFullYear().toString().slice(2)
     const month = (kstDate.getMonth() + 1).toString().padStart(2, "0")
     const day = kstDate.getDate().toString().padStart(2, "0")
@@ -116,13 +137,12 @@ export function formatDateTime(dateString: string): string {
   }
 }
 
-// 모범 답변을 볼 수 있는지 확인 (오후 8시 이후 또는 Day 4 질문)
+// 모범 답변을 볼 수 있는지 확인 (오후 8시 이후 또는 Day 6 질문)
 export function canViewModelAnswer(questionDay?: number): boolean {
-  // Day 4 질문은 항상 볼 수 있음
+  // Day 6 질문은 항상 볼 수 있음
   if (questionDay === 6) {
     return true
   }
-
   const now = new Date()
   return now.getHours() >= 20 // 저녁 8시 이후
 }
@@ -149,42 +169,54 @@ function getAnswerDeadline(questionDay: number): Date {
   const isDay3 = questionDay === 3
   const isDay4 = questionDay === 4
   const isDay5 = questionDay === 5
-  const isDay6 = questionDay === 6
-
   // 현재 요일 확인 (0: 일요일, 1: 월요일, ..., 5: 금요일, 6: 토요일)
   const currentDayOfWeek = now.getDay()
   const isFriday = currentDayOfWeek === 5
   const isMonday = currentDayOfWeek === 1
   const isTuesday = currentDayOfWeek === 2
-
+  const isWednesday = currentDayOfWeek === 3
+  const isTursday = currentDayOfWeek === 4
+  const isSaturday = currentDayOfWeek === 6
+  const isSunday = currentDayOfWeek === 0
+  
   // Day 5 질문이고 화요일이면 다음 날 오전 9시까지
-  if (isDay5 && isTuesday) {
+  if (isTuesday) {
     const nextDay = new Date(now)
     nextDay.setDate(now.getDate() + 1)
     nextDay.setHours(9, 0, 0, 0)
     return nextDay
   }
-
   // Day 4 질문이고 월요일이면 다음 날 오전 9시까지
-  if (isDay4 && isMonday) {
+  if (isMonday) {
     const nextDay = new Date(now)
     nextDay.setDate(now.getDate() + 1)
     nextDay.setHours(9, 0, 0, 0)
     return nextDay
   }
-
   // Day 3 질문이고 금요일이면 다음 주 월요일 오전 9시까지
-  if (isDay3 && isFriday) {
+  if (isFriday) {
     const nextMonday = new Date(now)
     // 현재 요일이 금요일(5)이면 +3일 하면 월요일
     nextMonday.setDate(now.getDate() + 3)
     nextMonday.setHours(9, 0, 0, 0)
     return nextMonday
   }
+  if (isSaturday) {
+    const nextMonday = new Date(now)
+    nextMonday.setDate(now.getDate() + 2)
+    nextMonday.setHours(9, 0, 0, 0)
+    return nextMonday
+  }
+  if (isSunday) {
+    const nextMonday = new Date(now)
+    nextMonday.setDate(now.getDate() + 1)
+    nextMonday.setHours(9, 0, 0, 0)
+    return nextMonday
+  }
 
   // Day 3, Day 4, Day 5 질문이지만 특정 요일이 아닌 경우, 당일 기준으로 계산
   // 현재 시간이 오전 9시 이전이면 당일 오전 9시, 이후면 다음 날 오전 9시
-  if (isDay3 || isDay4 || isDay5 || isDay6) {
+  if (isDay3 || isDay4 || isDay5 || isDay6 || isDay7 || isDay8|| isDay9|| isDay10) {
     const today = new Date(now)
     if (now.getHours() < 9) {
       // 오전 9시 이전이면 당일 오전 9시
