@@ -403,7 +403,7 @@ export default function Home() {
       let hasChanges = false
 
       // 각 카테고리별 질문 확인 상태 로드
-      const categoryKeys = ["frontend", "backend", "common", "personality"]
+      const categoryKeys = ["common","frontend", "backend", "personality"]
 
       categoryKeys.forEach((key) => {
         if (questions[key]) {
@@ -428,12 +428,12 @@ export default function Home() {
   // 카테고리 키에서 카테고리 이름 가져오기
   const getCategoryFromKey = (key: string): string => {
     switch (key) {
+      case "common":
+        return "공통"
       case "frontend":
         return "Frontend"
       case "backend":
         return "Backend"
-      case "common":
-        return "공통"
       case "personality":
         return "인성"
       default:
@@ -462,12 +462,12 @@ export default function Home() {
   // 카테고리 문자열을 키로 변환
   const getCategoryKey = (category: string): string => {
     switch (category) {
+      case "공통":
+        return "common"
       case "Frontend":
         return "frontend"
       case "Backend":
         return "backend"
-      case "공통":
-        return "common"
       case "인성":
         return "personality"
       default:
@@ -484,12 +484,12 @@ export default function Home() {
   // 현재 탭에 해당하는 카테고리 가져오기
   const getCurrentCategory = () => {
     switch (activeTab) {
+      case "common":
+        return "공통"
       case "frontend":
         return "Frontend"
       case "backend":
         return "Backend"
-      case "common":
-        return "공통"
       case "personality":
         return "인성"
       default:
@@ -506,19 +506,18 @@ export default function Home() {
     <PageLayout title={`Day ${dayCount} 오늘의 질문`} subtitle={formattedDate}>
       <Tabs defaultValue="common" onValueChange={handleTabChange}>
         <TabsList className="mb-0.5 w-full rounded-md">
+          <TabsTrigger value="common" className="flex-1 data-[state=active]:bg-white data-[state=active]:text-black">
+            공통
+          </TabsTrigger>
           <TabsTrigger value="frontend" className="flex-1 data-[state=active]:bg-white data-[state=active]:text-black">
             Frontend
           </TabsTrigger>
           <TabsTrigger value="backend" className="flex-1 data-[state=active]:bg-white data-[state=active]:text-black">
             Backend
           </TabsTrigger>
-          <TabsTrigger value="common" className="flex-1 data-[state=active]:bg-white data-[state=active]:text-black">
-            공통
-          </TabsTrigger>
           <TabsTrigger
-            value="personality"
-            className="flex-1 data-[state=active]:bg-white data-[state=active]:text-black"
-          >
+            value="personality"  className="flex-1 data-[state=active]
+            :bg-white data-[state=active]:text-black">
             인성
           </TabsTrigger>
         </TabsList>
