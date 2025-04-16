@@ -19,6 +19,14 @@ export default function ModelAnswer({ modelAnswer, questionDay = 1 }: ModelAnswe
       const now = new Date()
       const releaseHour = 20 // 저녁 8시
       const isDay3 = questionDay === 3
+      const isDay4 = questionDay === 4
+
+      // Day4 질문은 항상 볼 수 있게 설정
+      if (isDay4) {
+        setCanView(true)
+        setTimeRemaining("")
+        return
+      }
 
       // Day3 질문은 이미 어제 저녁 8시에 공개되었으므로 항상 볼 수 있게 설정
       if (isDay3) {
@@ -68,7 +76,7 @@ export default function ModelAnswer({ modelAnswer, questionDay = 1 }: ModelAnswe
 
   // HTML 문자열을 안전하게 렌더링하는 함수
   const renderHTML = (htmlString: string) => {
-    return { __html: htmlString }
+    return { __html: htmlString || "" }
   }
 
   return (
@@ -96,11 +104,7 @@ export default function ModelAnswer({ modelAnswer, questionDay = 1 }: ModelAnswe
         <Card className="mt-4 bg-hanghae-gray border-[#3a3e41] border-[1px]">
           <CardContent className="pt-4">
             <div className="prose dark:prose-invert max-w-none text-hanghae-text">
-              {modelAnswer ? (
-                <div dangerouslySetInnerHTML={renderHTML(modelAnswer)} />
-              ) : (
-                <p>이 질문에 대한 모범 답변이 준비되지 않았습니다.</p>
-              )}
+              <div dangerouslySetInnerHTML={renderHTML(modelAnswer)} />
             </div>
           </CardContent>
         </Card>

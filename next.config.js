@@ -13,6 +13,10 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  // 이미지 최적화 비활성화 설정 추가
+  images: {
+    unoptimized: true,
+  },
   // Add this to help with npm registry issues
   onDemandEntries: {
     // period (in ms) where the server will keep pages in the buffer
@@ -44,6 +48,32 @@ const nextConfig = {
       }
     }
     return config
+  },
+  // SSL 관련 설정 추가
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
+          {
+            key: "X-Content-Type-Options",
+            value: "nosniff",
+          },
+          {
+            key: "X-Frame-Options",
+            value: "DENY",
+          },
+          {
+            key: "X-XSS-Protection",
+            value: "1; mode=block",
+          },
+        ],
+      },
+    ]
   },
 }
 
