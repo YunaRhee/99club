@@ -9,15 +9,15 @@ import { formatDateShort } from "@/lib/utils"
 import { getAnswersByQuestionId } from "@/lib/answers"
 import AnswerList from "@/components/answer-list"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ChevronDown, ChevronRight } from "lucide-react"
+import { ChevronDown, ChevronRight } from 'lucide-react'
 
 export default function QuestionsPage() {
-  const [selectedQuestion, setSelectedQuestion] = useState<any>(null)
-  const [isModalOpen, setIsModalOpen] = useState(false)
-  const [publicAnswers, setPublicAnswers] = useState<any[]>([])
-  const [isLoadingAnswers, setIsLoadingAnswers] = useState(false)
-  const [selectedCategory, setSelectedCategory] = useState<string>("all") // 카테고리 필터링을 위한 상태 추가
-  const [showModelAnswer, setShowModelAnswer] = useState(false) // 모범 답변 표시 상태
+  const [selectedQuestion, setSelectedQuestion] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [publicAnswers, setPublicAnswers] = useState<any[]>([]);
+  const [isLoadingAnswers, setIsLoadingAnswers] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>("all"); // 카테고리 필터링을 위한 상태 추가
+  const [showModelAnswer, setShowModelAnswer] = useState(false); // 모범 답변 표시 상태
 
   // 하드코딩된 질문들 사용
   const questions = [
@@ -101,7 +101,7 @@ export default function QuestionsPage() {
       category: "Backend",
       hint: "단일 DB 트랜잭션이 아닌, 서비스 간 데이터 일관성을 유지하는 방식을 고민해본 경험을 떠올려 보세요. (예: Eventual Consistency, 이벤트 기반 처리, SAGA 패턴 등)",
       modelAnswer:
-        "<b>[첫 취업 준비생이라면?]</b><br>\n토이 프로젝트에서 사용자 서비스와 결제 서비스를 나누어 구현했는데, 결제 완료 후 사용자 상태를 업데이트하는 로직이 REST API 방식의 동기 호출되다 보니 결제 실패 시 사용자 상태가 잘못 변경되는 문제가 있었습니다.\n이를 해결하기 위해 RabbitMQ를 도입해 결제 완료 시 이벤트 메시지를 발행하고, 사용자 서비스가 이를 구독해 상태를 변경하도록 했습니다.\n비록 작은 프로젝트였지만, 서비스 간의 의존도를 줄이고 일관된 흐름을 유지하기 위해 비동기 메시징이 필요하다는 것을 체감할 수 있었습니다.\n<br><br>\n<b>[현직 개발자로, 이직 면접이라면?]</b><br>\n커머스 시스템에서 주문, 결제, 배송 서비스를 마이크로서비스로 분리한 이후, 주문 생성 후 결제 실패 시 데이터 정합성 이슈가 발생했습니다.\n이를 해결하기 위해 SAGA 패턴을 기반으로 한 이벤트 드리븐 구조를 도입했고, Kafka를 이벤트 브로커로 사용해 서비스 간 데이터를 전달했습니다.\n실패 시 보상 트랜잭션을 통해 이전 상태로 복구하는 로직을 각 서비스에 구현했으며, idempotent key 처리, DLQ 설계 등도 함께 적용해 정성을 높였습니다.\n결과적으로 연관 서비스 간 장애 전파율이 줄고 유지보수 비용도 감소했습니다.",
+        \"<b>[첫 취업 준비생이라면?]</b><br>\n토이 프로젝트에서 사용자 서비스와 결제 서비스를 나누어 구현했는데, 결제 완료 후 사용자 상태를 업데이트하는 로직이 REST API 방식의 동기 호출되다 보니 결제 실패 시 사용자 상태가 잘못 변경되는 문제가 있었습니다.\n이를 해결하기 위해 RabbitMQ를 도입해 결제 완료 시 이벤트 메시지를 발행하고, 사용자 서비스가 이를 구독해 상태를 변경하도록 했습니다.\n비록 작은 프로젝트였지만, 서비스 간의 의존도를 줄이고 일관된 흐름을 유지하기 위해 비동기 메시징이 필요하다는 것을 체감할 수 있었습니다.\n<br><br>\n<b>[현직 개발자로, 이직 면접이라면?]</b><br>\n커머스 시스템에서 주문, 결제, 배송 서비스를 마이크로서비스로 분리한 이후, 주문 생성 후 결제 실패 시 데이터 정합성 이슈가 발생했습니다.\n이를 해결하기 위해 SAGA 패턴을 기반으로 한 이벤트 드리븐 구조를 도입했고, Kafka를 이벤트 브로커로 사용해 서비스 간 데이터를 전달했습니다.\n실패 시 보상 트랜잭션을 통해 이전 상태로 복구하는 로직을 각 서비스에 구현했으며, idempotent key 처리, DLQ 설계 등도 함께 적용해 정성을 높였습니다.\n결과적으로 연관 서비스 간 장애 전파율이 줄고 유지보수 비용도 감소했습니다.",
       days: 2,
     },
     {
@@ -137,9 +137,7 @@ export default function QuestionsPage() {
       category: "공통",
       hint: "기술 부채는 빠른 개발을 위해 나중에 갚기로 한 '빚' 같은 기술적 타협을 말하며, 코드 중복, 테스트 누락, 문서화 부족 등도 포함됩니다. 기술 부채에 대한 정량화 기준(예: PR backlog, 테스트 커버리지 등), 대응 방식(Refactor Sprint, 주간 점검 등)을 중심으로 답변해 보세요.",
       modelAnswer:
-        "<b>[첫 취업 준비생이라면?]</b><br>팀 프로젝트에서 일정이 촉박해 공통 컴포넌트를 빠르게 하드코딩 방식으로 처리  주간 점검 등)을 중심으로 답변해 보세요.",
-      modelAnswer:
-        "<b>[첫 취업 준비생이라면?]</b><br>팀 프로젝트에서 일정이 촉박해 공통 컴포넌트를 빠르게 하드코딩 방식으로 처리한 적이 있습니다.<br>나중에는 같은 컴포넌트에 반복적으로 수정이 들어가면서 유지보수가 어려워졌고, 이걸 계기로 리팩토링 전용 스프린트를 따로 만들었습니다.<br>기능과 속도만 보던 초반과 달리, 이후엔 기술 부채도 하나의 '관리 대상'으로 인식하게 되었고, 지금은 설계 단계에서부터 중복과 확장 가능성을 의식하려 노력하고 있습니다.<br><br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br>사내 로젝트에서 테스트 커버리지 부족, 중복 로직, 복잡한 조건문이 점점 쌓이면서 개발 속도도 떨어지고 버그 빈도가 높아졌습니다.<br>이를 해결하기 위해 기술 부채 점검 기준을 팀 차원에서 정리하고, 매 스프린트마다 일정 비율로 리팩토링 태스크를 포함했습니다.",
+        "<b>[첫 취업 준비생이라면?]</b><br>팀 프로젝트에서 일정이 촉박해 공통 컴포넌트를 빠르게 하드코딩 방식으로 처리한 적이 있습니다.<br>나중에는 같은 컴포넌트에 반복적으로 수정이 들어가면서 유지보수가 어려워졌고, 이걸 계기로 리팩토링 전용 스프린트를 따로 만들었습니다.<br>기능과 속도만 보던 초반과 달리, 이후엔 기술 부채도 하나의 '관리 대상'으로 인식하게 되었고, 지금은 설계 단계에서부터 중복과 확장 가능성을 의식하려 노력하고 있습니다.<br><br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br>사내 프로젝트에서 테스트 커버리지 부족, 중복 로직, 복잡한 조건문이 점점 쌓이면서 개발 속도도 떨어지고 버그 빈도가 높아졌습니다.<br>이를 해결하기 위해 기술 부채 점검 기준을 팀 차원에서 정리하고, 매 스프린트마다 일정 비율로 리팩토링 태스크를 포함했습니다.",
       days: 3,
     },
     {
@@ -163,7 +161,7 @@ export default function QuestionsPage() {
       category: "Frontend",
       hint: "적용 과정에서 생긴 성능·UX상의 이슈와, 이를 해결하기 위해 도입한 도구나 기법(Webpack, dynamic import 등)을 구체적으로 설명해 보세요!",
       modelAnswer:
-        "<b>[첫 취업 준비생이라면?]</b><br>React로 만든 포트폴리오 사이트에서 초기 로딩 속도가 느려 사용자 이탈이 발생했습니다.<br>라우트 기반으로 React.lazy와 Suspense를 적용해 페이지 단위로 분리하고, 이미지에는 loading=\"lazy\" 속성을 넣었습니다.<br>처음에는 깜빡이는 현상이 있었지만 Skeleton UI를 도입하고, 데이터 요청 시점을 조정하면서 UX가 개선된 경험이 있습니다.<br><br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br>대규모 관리자 페이지에서 JS 번들이 점점 커지면서 LCP 지표가 악화됐고, 특히 모바일에서 문제였어요.<br>Webpack에서 공통 컴포넌트 단위까지 코드 스플리팅을 적용하고, IntersectionObserver를 활용해 Lazy Loading을 구현했습니다.<br>또한 초기 렌더링을 방해하는 비동기 리소스를 defer 처리하고, Critical CSS를 별도로 관리하면서 LCP가 약 40% 개선되었습니다.<br>이 과정에서 기술보다 '언제 무엇을 로딩할 것인가'의 전략이 훨씬 중요하다는 걸 체감했습니다.",
+        "<b>[첫 취업 준비생이라면?]</b><br>React로 만든 포트폴리오 사이트에서 초기 로딩 속도가 느려 사용자 이탈이 발생했습니다.<br>라우트 기반으로 React.lazy와 Suspense를 적용해 페이지 단위로 분리하고, 이미지에는 loading=lazy 속성을 넣었습니다.<br>처음에는 깜빡이는 현상이 있었지만 Skeleton UI를 도입하고, 데이터 요청 시점을 조정하면서 UX가 개선된 경험이 있습니다.<br><br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br>대규모 관리자 페이지에서 JS 번들이 점점 커지면서 LCP 지표가 악화됐고, 특히 모바일에서 문제였어요.<br>Webpack에서 공통 컴포넌트 단위까지 코드 스플리팅을 적용하고, IntersectionObserver를 활용해 Lazy Loading을 구현했습니다.<br>또한 초기 렌더링을 방해하는 비동기 리소스를 defer 처리하고, Critical CSS를 별도로 관리하면서 LCP가 약 40% 개선되었습니다.<br>이 과정에서 기술보다 '언제 무엇을 로딩할 것인가'의 전략이 훨씬 중요하다는 걸 체감했습니다.",
       days: 3,
     },
     {
@@ -233,7 +231,7 @@ export default function QuestionsPage() {
         "프론트엔드 성능 병목을 진단하고 개선한 경험이 있다면, 어떤 도구를 사용했고 어떤 수치를 중심으로 개선했는지 설명해 주세요.",
       date: "2025-04-15",
       category: "Frontend",
-      hint: 'DevTools나 Lighthouse에서 어떤 수치를 보고 문제를 파악했는지, 그리고 개선 전후 어떤 변화가 있었는지를 명확히 설명해 보세요. 단순히 "느렸다 → 빨라졌다"보다는 병목 구간을 정확히 짚는 것이 중요합니다.',
+      hint: "DevTools나 Lighthouse에서 어떤 수치를 보고 문제를 파악했는지, 그리고 개선 전후 어떤 변화가 있었는지를 명확히 설명해 보세요. 단순히 느렸다 → 빨라졌다보다는 병목 구간을 정확히 짚는 것이 중요합니다.",
       modelAnswer:
         "<b>[첫 취업 준비생이라면?]</b><br> React 기반 포트폴리오 사이트에서 초기 로딩 속도가 지나치게 느렸고, Lighthouse 분석 결과 이미지와 폰트 로딩이 병목 원인이었습니다.<br> 이미지에는 Lazy Loading을 적용하고, 웹폰트를 preload 처리하여 FCP를 2초에서 0.9초로 개선했습니다.<br> 이 과정에서 성능 지표를 수치로 보며 개선하는 재미를 처음 느꼈습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 내부 CRM 시스템에서 유저 전환 시 LCP 지연이 발생했으며, DevTools 성능 탭을 통해 Layout Shift와 JS 실행 시간이 문제임을 파악했습니다.<br> chunk 분리, 이미지 최적화, critical CSS 추출 등 다각적 개선을 통해 주요 지표가 30~40% 개선되었고, 사용자 불만도 확연히 줄었습니다.<br> 이후 New Relic과 연동하여 배포 후에도 실시간 성능 지표를 모니터링하고 있습니다.",
       days: 5,
@@ -245,7 +243,7 @@ export default function QuestionsPage() {
         "API를 설계하거나 운영하면서, 일관성을 유지하고 변경을 관리하기 위해 어떤 전략을 사용했는지 설명해 주세요. (버전 관리, 응답 포맷 설계, 호환성 유지 방식 등을 중심으로)",
       date: "2025-04-15",
       category: "Backend",
-      hint: '실무에서는 API가 한 번 공개되면 쉽게 바꿀 수 없습니다. 이 질문은 "처음부터 바뀔 수 있음을 고려하고 설계했는가"를 묻는 것입니다. URI 버전 관리, 응답 포맷 고정, Deprecation 정책 같은 구체적인 조치가 있다면 강력한 답변이 됩니다.',
+      hint: "실무에서는 API가 한 번 공개되면 쉽게 바꿀 수 없습니다. 이 질문은 처음부터 바뀔 수 있음을 고려하고 설계했는가를 묻는 것입니다. URI 버전 관리, 응답 포맷 고정, Deprecation 정책 같은 구체적인 조치가 있다면 강력한 답변이 됩니다.",
       modelAnswer:
         "<b>[첫 취업 준비생이라면?]</b><br> 처음엔 기능만 되면 된다고 생각했는데, 프론트엔드 파트너가 다른 화면에서 재사용할 수 없다고 불편을 느끼는 걸 보고 설계가 중요하다는 걸 느꼈습니다.<br> 그 후에는 URI와 응답 포맷을 명확히 정의하고, 응답에 항상 status, message, data 필드를 고정해서 주도록 구조를 정리했습니다.<br> 추후에 기능이 추가될 때도 혼란 없이 API를 재사용할 수 있었고, 의도하지 않은 깨짐도 줄어들었습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> API 응답 포맷이 일관되지 않아 프론트와의 협업 효율이 떨어지는 문제가 반복됐습니다.<br> 이에 응답 구조를 JSON Schema 기반으로 명세화하고, Swagger 문서화와 함께 Lint를 통한 API 규칙 검사를 도입했습니다.<br> 또한 v1/v2로 URI 버전 관리 체계를 적용하고, Deprecation 시점과 호환 유지 기준을 문서로 정리해 신규 기능 도입 시 혼란을 최소화할 수 있었습니다.",
       days: 5,
@@ -466,49 +464,49 @@ export default function QuestionsPage() {
       "<b>[첫 취업 준비생이라면?]</b><br> 팀 프로젝트 중 제가 작성한 코드가 너무 방어적이고, 가독성이 떨어진다는 리뷰를 받았습니다.<br> 처음엔 좀 당황했지만, 그 피드백을 계기로 조건문 처리나 네이밍, 불필요한 옵셔널 체이닝을 줄이는 연습을 시작했어요.<br> 이후 유사한 기능을 구현할 땐 더 간결하고 명확한 코드를 짜게 되었고, 팀원 리뷰에서도 ‘코드가 훨씬 읽기 쉬워졌다’는 피드백을 다시 받았습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 업무 초기에 제가 작성한 PR에 대해 “이건 잘 동작하지만, 유지보수성이 떨어진다”는 리뷰를 받은 적이 있었습니다.<br> 단순 기능 구현만 생각했던 제 관점에 문제가 있었다는 걸 느끼고, 이후부터는 단기 완성도보다 구조적인 고민을 먼저 하게 되었습니다.<br> 이후부터는 기능 개발 전에 스스로 의존성, 확장 포인트를 먼저 정리하고 팀원과 사전 공유하는 습관이 생겼고, 코드 품질뿐 아니라 협업 과정도 훨씬 원활해졌습니다.",
     days: 10,
     },
-  ]
+  ];
 
   // 카테고리별 필터링된 질문 목록
   const filteredQuestions =
-    selectedCategory === "all" ? questions : questions.filter((q) => q.category === selectedCategory)
+    selectedCategory === "all" ? questions : questions.filter((q) => q.category === selectedCategory);
 
   // 질문 클릭 핸들러
   const handleQuestionClick = async (question: any) => {
-    setSelectedQuestion(question)
-    setIsModalOpen(true)
-    setShowModelAnswer(false) // 모달 열 때마다 모범 답변 상태 초기화
+    setSelectedQuestion(question);
+    setIsModalOpen(true);
+    setShowModelAnswer(false); // 모달 열 때마다 모범 답변 상태 초기화
 
     // 공개된 답변 가져오기
-    setIsLoadingAnswers(true)
+    setIsLoadingAnswers(true);
     try {
-      const answers = await getAnswersByQuestionId(question.id, true)
-      setPublicAnswers(answers)
+      const answers = await getAnswersByQuestionId(question.id, true);
+      setPublicAnswers(answers);
     } catch (error) {
-      console.error("답변 가져오기 오류:", error)
+      console.error("답변 가져오기 오류:", error);
     } finally {
-      setIsLoadingAnswers(false)
+      setIsLoadingAnswers(false);
     }
-  }
+  };
 
   // 모범 답변 표시 가능 여부 확인
   const canShowModelAnswer = (questionDay: number) => {
     // Day 6 질문은 오늘 저녁 8시 이후에만 공개
     if (questionDay === 7) {
-      const now = new Date()
-      const today8PM = new Date()
-      today8PM.setHours(20, 0, 0, 0) // 오늘 저녁 8시
+      const now = new Date();
+      const today8PM = new Date();
+      today8PM.setHours(20, 0, 0, 0); // 오늘 저녁 8시
 
-      return now >= today8PM
+      return now >= today8PM;
     }
 
     // Day 1~5 질문은 항상 모범 답변 표시 가능
-    return questionDay >= 1 && questionDay <= 6
-  }
+    return questionDay >= 1 && questionDay <= 6;
+  };
 
   // HTML 문자열을 안전하게 렌더링하는 함수
   const renderHTML = (htmlString: string) => {
-    return { __html: htmlString || "" }
-  }
+    return { __html: htmlString || "" };
+  };
 
   return (
     <PageLayout
@@ -622,7 +620,7 @@ export default function QuestionsPage() {
                     }`}
                     onClick={() => {
                       if (canShowModelAnswer(selectedQuestion.days)) {
-                        setShowModelAnswer(!showModelAnswer)
+                        setShowModelAnswer(!showModelAnswer);
                       }
                     }}
                   >
@@ -658,19 +656,19 @@ export default function QuestionsPage() {
                     </Card>
                   )}
                 </div>
-              )}
-
-              <div className="mt-6">
-                <h2 className="text-lg font-bold mb-4">공개된 답변</h2>
-                {isLoadingAnswers ? (
-                  <div className="flex justify-center items-center h-20">
-                    <div className="animate-pulse text-hanghae-text">답변을 불러오는 중...</div>
-                  </div>
-                ) : (
-                  <AnswerList answers={publicAnswers} />
-                )}
-              </div>
-            </>
+  )
+}
+;<div className="mt-6">
+  <h2 className="text-lg font-bold mb-4">공개된 답변</h2>
+  {isLoadingAnswers ? (
+    <div className="flex justify-center items-center h-20">
+      <div className="animate-pulse text-hanghae-text">답변을 불러오는 중...</div>
+    </div>
+  ) : (
+    <AnswerList answers={publicAnswers} />
+  )}
+</div>
+</>
           )}
         </DialogContent>
       </Dialog>
