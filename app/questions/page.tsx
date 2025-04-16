@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { ChevronDown, ChevronRight, ChevronUp, Clock } from "lucide-react"
+import { ChevronDown, ChevronRight, ChevronUp, Clock } from 'lucide-react'
 import { useState, useEffect } from "react"
 import PageLayout from "@/components/page-layout"
 import { useAuth } from "@/lib/auth-context"
@@ -307,6 +307,27 @@ export default function QuestionsPage() {
       days: 6,
     },
   ]
+
+  // 카테고리 수정 부분만 변경합니다.
+  // q21, q22, q23의 카테고리를 올바르게 수정합니다.
+
+  // q21 카테고리 수정 (공통)
+  const q21 = hardcodedQuestions.find(q => q.id === "q21");
+  if (q21) {
+    q21.category = "공통";
+  }
+
+  // q22 카테고리 수정 (Frontend)
+  const q22 = hardcodedQuestions.find(q => q.id === "q22");
+  if (q22) {
+    q22.category = "Frontend";
+  }
+
+  // q23 카테고리 수정 (Backend)
+  const q23 = hardcodedQuestions.find(q => q.id === "q23");
+  if (q23) {
+    q23.category = "Backend";
+  }
 
   const [questions, setQuestions] = useState<Question[]>(hardcodedQuestions)
   const [filteredQuestions, setFilteredQuestions] = useState<Question[]>(hardcodedQuestions)
