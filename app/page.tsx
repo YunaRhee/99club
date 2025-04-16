@@ -1,15 +1,5 @@
 "use client"
 
-import { useState, useEffect } from "react"
-import type { Question } from "@/lib/questions"
-import QuestionCard from "@/components/question-card"
-import AnswerForm from "@/components/answer-form"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import ModelAnswer from "@/components/model-answer"
-import PageLayout from "@/components/page-layout"
-import { Clock } from "lucide-react"
-import { getTimeRemainingForSubmission } from "@/lib/utils"
-
 export default function Home() {
   // 하드코딩된 Day 2 질문들 - ID 형식 수정
   const hardcodedQuestions = {
@@ -178,7 +168,7 @@ export default function Home() {
         "프론트엔드 성능 병목을 진단하고 개선한 경험이 있다면, 어떤 도구를 사용했고 어떤 수치를 중심으로 개선했는지 설명해 주세요.",
       date: "2025-04-15",
       category: "Frontend",
-      hint: "DevTools나 Lighthouse에서 어떤 수치를 보고 문제를 파악했는지, 그리고 개선 전후 어떤 변화가 있었는지를 명확히 설명해 보세요. 단순히 “느렸다 → 빨라졌다”보다는 병목 구간을 정확히 짚는 것이 중요합니다.",
+      hint: 'DevTools나 Lighthouse에서 어떤 수치를 보고 문제를 파악했는지, 그리고 개선 전후 어떤 변화가 있었는지를 명확히 설명해 보세요. 단순히 "느렸다 → 빨라졌다"보다는 병목 구간을 정확히 짚는 것이 중요합니다.',
       modelAnswer:
         "<b>[첫 취업 준비생이라면?]</b><br> React 기반 포트폴리오 사이트에서 초기 로딩 속도가 지나치게 느렸고, Lighthouse 분석 결과 이미지와 폰트 로딩이 병목 원인이었습니다.<br> 이미지에는 Lazy Loading을 적용하고, 웹폰트를 preload 처리하여 FCP를 2초에서 0.9초로 개선했습니다.<br> 이 과정에서 성능 지표를 수치로 보며 개선하는 재미를 처음 느꼈습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 내부 CRM 시스템에서 유저 전환 시 LCP 지연이 발생했으며, DevTools 성능 탭을 통해 Layout Shift와 JS 실행 시간이 문제임을 파악했습니다.<br> chunk 분리, 이미지 최적화, critical CSS 추출 등 다각적 개선을 통해 주요 지표가 30~40% 개선되었고, 사용자 불만도 확연히 줄었습니다.<br> 이후 New Relic과 연동하여 배포 후에도 실시간 성능 지표를 모니터링하고 있습니다.",
       days: 5,
@@ -190,7 +180,7 @@ export default function Home() {
         "API를 설계하거나 운영하면서, 일관성을 유지하고 변경을 관리하기 위해 어떤 전략을 사용했는지 설명해 주세요. (버전 관리, 응답 포맷 설계, 호환성 유지 방식 등을 중심으로)",
       date: "2025-04-15",
       category: "Backend",
-      hint: "실무에서는 API가 한 번 공개되면 쉽게 바꿀 수 없습니다. 이 질문은 “처음부터 바뀔 수 있음을 고려하고 설계했는가”를 묻는 것입니다. URI 버전 관리, 응답 포맷 고정, Deprecation 정책 같은 구체적인 조치가 있다면 강력한 답변이 됩니다.",
+      hint: '실무에서는 API가 한 번 공개되면 쉽게 바꿀 수 없습니다. 이 질문은 "처음부터 바뀔 수 있음을 고려하고 설계했는가"를 묻는 것입니다. URI 버전 관리, 응답 포맷 고정, Deprecation 정책 같은 구체적인 조치가 있다면 강력한 답변이 됩니다.',
       modelAnswer:
         "<b>[첫 취업 준비생이라면?]</b><br> 처음엔 기능만 되면 된다고 생각했는데, 프론트엔드 파트너가 다른 화면에서 재사용할 수 없다고 불편을 느끼는 걸 보고 설계가 중요하다는 걸 느꼈습니다.<br> 그 후에는 URI와 응답 포맷을 명확히 정의하고, 응답에 항상 status, message, data 필드를 고정해서 주도록 구조를 정리했습니다.<br> 추후에 기능이 추가될 때도 혼란 없이 API를 재사용할 수 있었고, 의도하지 않은 깨짐도 줄어들었습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> API 응답 포맷이 일관되지 않아 프론트와의 협업 효율이 떨어지는 문제가 반복됐습니다.<br> 이에 응답 구조를 JSON Schema 기반으로 명세화하고, Swagger 문서화와 함께 Lint를 통한 API 규칙 검사를 도입했습니다.<br> 또한 v1/v2로 URI 버전 관리 체계를 적용하고, Deprecation 시점과 호환 유지 기준을 문서로 정리해 신규 기능 도입 시 혼란을 최소화할 수 있었습니다.",
       days: 5,
@@ -226,7 +216,7 @@ export default function Home() {
         "컴포넌트를 설계할 때 재사용성과 유지보수성을 높이기 위해 어떤 원칙을 적용했는지, 실제 사례와 함께 설명해 주세요.",
       date: "2025-04-16",
       category: "Frontend",
-      hint: "재사용성은 단순히 나누었다가 아니라, 역할 분리와 데이터 흐름을 고민했는지에 달려 있습니다. Atomic Design, Container/Presentational 구조, props 최소화 등의 실천이 구체적으로 드러나면 좋습니다.",
+      hint: "재사용성은 단순히 '쪼갰다'가 아니라, 역할 분리와 데이터 흐름을 고민했는지에 달려 있습니다. Atomic Design, Container/Presentational 구조, props 최소화 등의 실천이 구체적으로 드러나면 좋습니다.",
       modelAnswer:
         "<b>[첫 취업 준비생이라면?]</b><br> React 프로젝트에서 UI 요소가 점점 중복되자, 공통 UI를 Atomic Design 기준으로 재설계한 경험이 있습니다.<br> Button, Modal, Card 같은 컴포넌트를 각각의 관심사에 따라 분리하고, props를 엄격히 관리해 재사용성을 높였습니다.<br> 이후 기능 추가 시 중복 없이 빠르게 적용할 수 있었고, 팀원들과의 협업 속도도 개선되었습니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br>디자인 시스템을 도입하면서 공통 UI 컴포넌트를 Atomic Design 패턴에 따라 재구성했습니다.<br>또한 로직이 섞이지 않도록 Presentation-Container 구조로 나누고, props를 최소화하고 기본값을 명시하는 방식으로 유지보수성을 확보했습니다.<br>이후 팀 신규 기능 개발 속도가 약 30% 향상되었고, 테스트도 훨씬 수월해졌습니다.",
       days: 6,
@@ -250,9 +240,9 @@ export default function Home() {
         "개발을 제외하고, 요즘 본인이 가장 중요하게 생각하거나 고민하고 있는 주제가 있다면 무엇인지 공유해 주세요.",
       date: "2025-04-16",
       category: "인성",
-      hint: "기술적인 이야기에서 잠시 벗어나, 지원자의 사고방식, 가치관, 현재의 관심사를 묻는 질문입니다. 꼭 멋진 답이 아니어도 좋습니다. 다만 ‘왜 그걸 중요하게 생각하는지’가 드러나는 게 핵심입니다.",
+      hint: "기술적인 이야기에서 잠시 벗어나, 지원자의 사고방식, 가치관, 현재의 관심사를 묻는 질문입니다. 꼭 멋진 답이 아니어도 좋습니다. 다만 '왜 그걸 중요하게 생각하는지'가 드러나는 게 핵심입니다.",
       modelAnswer:
-        "<b>[첫 취업 준비생이라면?]</b><br> 요즘은 “협업을 잘하려면 뭘 먼저 신경 써야 할까?”를 자주 고민하고 있어요.<br> 혼자 공부할 땐 기술이 전부라고 생각했는데, 프로젝트를 해보니 커뮤니케이션 실수 하나가 전체 일정에 영향을 주더라고요.<br> 그래서 말 습관이나 회의 정리 같은 것도 연습 중입니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 최근에는 “내가 일하는 방식이 얼마나 지속 가능한가?”를 많이 고민하고 있습니다.<br> 빠르게 일하는 것도 좋지만, 무리하거나 지치면 결국 퍼포먼스가 떨어지더라고요.<br> 그래서 회고 습관, 일정 관리 도구 활용 등 ‘꾸준한 일’을 만드는 연습을 하고 있습니다.",
+        '<b>[첫 취업 준비생이라면?]</b><br> 요즘은 "협업을 잘하려면 뭘 먼저 신경 써야 할까?"를 자주 고민하고 있어요.<br> 혼자 공부할 땐 기술이 전부라고 생각했는데, 프로젝트를 해보니 커뮤니케이션 실수 하나가 전체 일정에 영향을 주더라고요.<br> 그래서 말 습관이나 회의 정리 같은 것도 연습 중입니다.<br><br><b>[현직 개발자로, 이직 면접이라면?]</b><br> 최근에는 "내가 일하는 방식이 얼마나 지속 가능한가?"를 많이 고민하고 있습니다.<br> 빠르게 일하는 것도 좋지만, 무리하거나 지치면 결국 퍼포먼스가 떨어지더라고요.<br> 그래서 회고 습관, 일정 관리 도구 활용 등 \'꾸준한 일\'을 만드는 연습을 하고 있습니다.',
       days: 6,
     },
   }
@@ -267,324 +257,18 @@ export default function Home() {
     const day4ReleaseTime = new Date(2025, 3, 14, 9, 0, 0)
     // 2025년 4월 15일 오전 9시 (Day 5 공개 시간)
     const day5ReleaseTime = new Date(2025, 3, 15, 9, 0, 0)
-    // 2025년 4월 16일 오전 9시 (Day 5 공개 시간)
+    // 2025년 4월 16일 오전 9시 (Day 6 공개 시간)
     const day6ReleaseTime = new Date(2025, 3, 16, 9, 0, 0)
 
     if (now >= day6ReleaseTime) {
-      return 6; // Day 5 공개됨
+      return 6 // Day 6 공개됨
     } else if (now >= day5ReleaseTime) {
-      return 5; // Day 4 공개됨
+      return 5 // Day 5 공개됨
     } else if (now >= day4ReleaseTime) {
-      return 4; // Day 3 공개됨
+      return 4 // Day 4 공개됨
     } else if (now >= day3ReleaseTime) {
-      return 3; // Day 3 공개됨
-    } 
-    return 2; // 그 전에는 Day 2
-
+      return 3 // Day 3 공개됨
+    }
+    return 2 // 그 전에는 Day 2
   }
-
-  // 현재 날짜 기준 Day 계산 - 항상 2 반환
-  const dayCount = calculateDayCount()
-
-  // 카테고리별 질문 확인 상태 관리
-  const [confirmedCategories, setConfirmedCategories] = useState<{ [key: string]: boolean }>({
-    frontend: false,
-    backend: false,
-    common: false,
-    personality: false,
-  })
-
-  // 질문 데이터 상태 - 하드코딩된 질문으로 초기화
-  const [isLoading, setIsLoading] = useState(false)
-  const [questions, setQuestions] = useState<{
-    frontend: Question | null
-    backend: Question | null
-    common: Question | null
-    personality: Question | null
-  }>(() => {
-    // 현재 시간 확인
-    const now = new Date()
-    const day3ReleaseTime = new Date(2025, 3, 11, 9, 0, 0) // 2025년 4월 11일 오전 9시
-    const day4ReleaseTime = new Date(2025, 3, 14, 9, 0, 0) // 2025년 4월 14일 오전 9시
-    const day5ReleaseTime = new Date(2025, 3, 15, 9, 0, 0) // 2025년 4월 15일 오전 9시
-    const day6ReleaseTime = new Date(2025, 3, 16, 9, 0, 0) // 2025년 4월 15일 오전 9시
-
-    // Day 5 공개 시간이 되었는지 확인
-    if (now >= day6ReleaseTime) {
-      // Day 5 질문 표시
-      return {
-        frontend: hardcodedQuestions.q21, // Day 5 Frontend 질문
-        backend: hardcodedQuestions.q22, // Day 5 Backend 질문
-        common: hardcodedQuestions.q23, // Day 5 공통 질문
-        personality: hardcodedQuestions.q24, // Day 5 인성 질문
-      }
-    }
-    // Day 5 공개 시간이 되었는지 확인
-    if (now >= day5ReleaseTime) {
-      // Day 5 질문 표시
-      return {
-        frontend: hardcodedQuestions.q18, // Day 5 Frontend 질문
-        backend: hardcodedQuestions.q19, // Day 5 Backend 질문
-        common: hardcodedQuestions.q17, // Day 5 공통 질문
-        personality: hardcodedQuestions.q20, // Day 5 인성 질문
-      }
-    }
-    // Day 4 공개 시간이 되었는지 확인
-    if (now >= day4ReleaseTime) {
-      // Day 4 질문 표시
-      return {
-        frontend: hardcodedQuestions.q14, // Day 4 Frontend 질문
-        backend: hardcodedQuestions.q15, // Day 4 Backend 질문
-        common: hardcodedQuestions.q13, // Day 4 공통 질문
-        personality: hardcodedQuestions.q16, // Day 4 인성 질문
-      }
-    }
-    // Day 3 공개 시간이 되었는지 확인
-    else if (now >= day3ReleaseTime) {
-      // Day 3 질문 표시
-      return {
-        frontend: hardcodedQuestions.q12, // Day 3 Frontend 질문
-        backend: hardcodedQuestions.q11, // Day 3 Backend 질문
-        common: hardcodedQuestions.q10, // Day 3 공통 질문
-        personality: hardcodedQuestions.q9, // Day 3 인성 질문
-      }
-    } else {
-      // Day 2 질문 표시
-      return {
-        frontend: hardcodedQuestions.frontend,
-        backend: hardcodedQuestions.backend,
-        common: hardcodedQuestions.common,
-        personality: hardcodedQuestions.personality,
-      }
-    }
-  })
-  const [initialLoading, setInitialLoading] = useState(false)
-
-  // 현재 선택된 탭
-  const [activeTab, setActiveTab] = useState("common") // 공통 탭을 기본으로 선택
-
-  // 현재 날짜 포맷팅 (25/04/03(목))
-  const today = new Date()
-  const dayOfWeek = ["일", "월", "화", "수", "목", "금", "토"][today.getDay()]
-  const formattedDate = `${today.getFullYear().toString().slice(2)}/${(today.getMonth() + 1).toString().padStart(2, "0")}/${today.getDate().toString().padStart(2, "0")}(${dayOfWeek})`
-
-  // 타이머 상태 추가
-  const [timeRemaining, setTimeRemaining] = useState<string>("")
-  const [nextQuestionTime, setNextQuestionTime] = useState<string>("")
-
-  // 타이머 계산 함수 수정
-  useEffect(() => {
-    const calculateTimeRemaining = () => {
-      const now = new Date()
-      const currentQuestion = questions[activeTab]
-
-      if (!currentQuestion) return ""
-
-      // 현재 질문의 Day 번호 가져오기
-      const questionDay = currentQuestion.days || 1
-
-      // 새로운 유틸리티 함수 사용
-      return getTimeRemainingForSubmission(questionDay)
-    }
-
-    calculateTimeRemaining()
-    const timer = setInterval(() => {
-      const remaining = calculateTimeRemaining()
-      setTimeRemaining(remaining)
-    }, 1000)
-
-    return () => clearInterval(timer)
-  }, [activeTab, questions])
-
-  // 로컬 스토리지에서 확인 상태 로드 - 수정된 부분
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const newConfirmedState = { ...confirmedCategories }
-      let hasChanges = false
-
-      // 각 카테고리별 질문 확인 상태 로드
-      const categoryKeys = ["common","frontend", "backend", "personality"]
-
-      categoryKeys.forEach((key) => {
-        if (questions[key]) {
-          const question = questions[key]
-          const category = getCategoryFromKey(key)
-          const storageKey = `question_read_${question.id}_${category}`
-
-          if (localStorage.getItem(storageKey) === "true") {
-            newConfirmedState[key] = true
-            hasChanges = true
-          }
-        }
-      })
-
-      // 상태가 변경되었을 때만 업데이트
-      if (hasChanges) {
-        setConfirmedCategories(newConfirmedState)
-      }
-    }
-  }, [])
-
-  // 카테고리 키에서 카테고리 이름 가져오기
-  const getCategoryFromKey = (key: string): string => {
-    switch (key) {
-      case "common":
-        return "공통"
-      case "frontend":
-        return "Frontend"
-      case "backend":
-        return "Backend"
-      case "personality":
-        return "인성"
-      default:
-        return key
-    }
-  }
-
-  // 질문 확인 핸들러
-  const handleQuestionConfirmed = (category: string) => {
-    const categoryKey = getCategoryKey(category)
-
-    // 로컬 스토리지에 저장
-    if (typeof window !== "undefined") {
-      const question = questions[categoryKey]
-      if (question) {
-        localStorage.setItem(`question_read_${question.id}_${category}`, "true")
-      }
-    }
-
-    setConfirmedCategories((prev) => ({
-      ...prev,
-      [categoryKey]: true,
-    }))
-  }
-
-  // 카테고리 문자열을 키로 변환
-  const getCategoryKey = (category: string): string => {
-    switch (category) {
-      case "공통":
-        return "common"
-      case "Frontend":
-        return "frontend"
-      case "Backend":
-        return "backend"
-      case "인성":
-        return "personality"
-      default:
-        return "frontend"
-    }
-  }
-
-  // 현재 탭에 해당하는 질문 ID 가져오기
-  const getCurrentQuestionId = () => {
-    const question = questions[activeTab]
-    return question ? question.id : ""
-  }
-
-  // 현재 탭에 해당하는 카테고리 가져오기
-  const getCurrentCategory = () => {
-    switch (activeTab) {
-      case "common":
-        return "공통"
-      case "frontend":
-        return "Frontend"
-      case "backend":
-        return "Backend"
-      case "personality":
-        return "인성"
-      default:
-        return "Frontend"
-    }
-  }
-
-  // 탭 변경 핸들러
-  const handleTabChange = (value: string) => {
-    setActiveTab(value)
-  }
-
-  return (
-    <PageLayout title={`Day ${dayCount} 오늘의 질문`} subtitle={formattedDate}>
-      <Tabs defaultValue="common" onValueChange={handleTabChange}>
-        <TabsList className="mb-0.5 w-full rounded-md">
-          <TabsTrigger value="common" className="flex-1 data-[state=active]:bg-white data-[state=active]:text-black">
-            공통
-          </TabsTrigger>
-          <TabsTrigger value="frontend" className="flex-1 data-[state=active]:bg-white data-[state=active]:text-black">
-            Frontend
-          </TabsTrigger>
-          <TabsTrigger value="backend" className="flex-1 data-[state=active]:bg-white data-[state=active]:text-black">
-            Backend
-          </TabsTrigger>
-          <TabsTrigger
-            value="personality"  className="flex-1 data-[state=active]
-            :bg-white data-[state=active]:text-black">
-            인성
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="frontend">
-          {questions.frontend ? (
-            <QuestionCard question={questions.frontend} category="Frontend" onConfirmRead={handleQuestionConfirmed} />
-          ) : (
-            <div className="p-4 bg-hanghae-gray rounded-md text-hanghae-text border-[#3a3e41] border-[1px]">
-              오늘의 Frontend 질문이 준비되지 않았습니다.
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="backend">
-          {questions.backend ? (
-            <QuestionCard question={questions.backend} category="Backend" onConfirmRead={handleQuestionConfirmed} />
-          ) : (
-            <div className="p-4 bg-hanghae-gray rounded-md text-hanghae-text border-[#3a3e41] border-[1px]">
-              오늘의 Backend 질문이 준비되지 않았습니다.
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="common">
-          {questions.common ? (
-            <QuestionCard question={questions.common} category="공통" onConfirmRead={handleQuestionConfirmed} />
-          ) : (
-            <div className="p-4 bg-hanghae-gray rounded-md text-hanghae-text border-[#3a3e41] border-[1px]">
-              오늘의 공통 질문이 준비되지 않았습니다.
-            </div>
-          )}
-        </TabsContent>
-
-        <TabsContent value="personality">
-          {questions.personality ? (
-            <QuestionCard question={questions.personality} category="인성" onConfirmRead={handleQuestionConfirmed} />
-          ) : (
-            <div className="p-4 bg-hanghae-gray rounded-md text-hanghae-text border-[#3a3e41] border-[1px]">
-              오늘의 인성 질문이 준비되지 않았습니다.
-            </div>
-          )}
-        </TabsContent>
-      </Tabs>
-
-      {/* 답변 작성하기 폼 - 해당 카테고리 질문이 확인된 경우에만 표시 */}
-      {confirmedCategories[activeTab] && (
-        <div className="mt-8">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-hanghae-text">답변 작성하기</h2>
-            <div className="flex items-center text-main-red font-bold">
-              <Clock className="h-4 w-4 mr-1" />
-              <span className="text-sm">인증 마감까지</span>
-              <span className="ml-2">{timeRemaining}</span>
-            </div>
-          </div>
-          <AnswerForm questionId={getCurrentQuestionId()} category={getCurrentCategory()} />
-        </div>
-      )}
-
-      {/* 모범 답안 - 항상 표시 */}
-      {questions[activeTab] && (
-        <ModelAnswer
-          modelAnswer={questions[activeTab].modelAnswer || ""}
-          questionDay={questions[activeTab].days || 1}
-        />
-      )}
-    </PageLayout>
-  )
 }
